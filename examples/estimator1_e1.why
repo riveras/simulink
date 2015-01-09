@@ -1,0 +1,63 @@
+theory M_estimator1
+ use import int.Int
+ use import real.RealInfix
+ use import matrix.Matrix
+ use import bool.Bool
+ function b_a_op1 int: matrix
+ function b_a_lc_op1 int: matrix
+ function b_ax_op1 int: matrix
+ function b_axh_op1 int: matrix
+ function b_c_op1 int: matrix
+ function b_is_equal_scalar_op1 int: bool
+ function b_l_op1 int: matrix
+ function b_lc_op1 int: matrix
+ function b_lz_op1 int: matrix
+ function b_e_k__op1 int: matrix
+ function b_e2_op1 int: matrix
+ function b_eprev_op1 int: matrix
+ function b_x_k__op1 int: matrix
+ function b_xhat_k__op1 int: matrix
+ function b_xhat_k_1__op1 int: matrix
+ function b_y_op1 int: matrix
+ function b_yhat_op1 int: matrix
+ function b_z_op1 int: matrix
+
+  clone simulink2.Constant as B_A with function out1 = b_a_op1
+
+  clone simulink2.Sum_subtract as B_A_lc with function in1 = b_a_op1, function in2 = b_lc_op1, function out1 = b_a_lc_op1
+
+  clone simulink2.Product as B_Ax  with function in1 = b_a_op1, function in2 = b_x_k__op1, function out1 = b_ax_op1
+
+  clone simulink2.Product as B_Axh  with function in1 = b_a_op1, function in2 = b_xhat_k__op1, function out1 = b_axh_op1
+
+  clone simulink2.Constant as B_C with function out1 = b_c_op1
+
+ clone simulink2.Is_equal_scalar as B_Is_equal_scalar with function in1 = b_e_k__op1, function in2 = b_e2_op1, function out1 = b_is_equal_scalar_op1
+
+  clone simulink2.Constant as B_L with function out1 = b_l_op1
+
+  clone simulink2.Product as B_Lc  with function in1 = b_l_op1, function in2 = b_c_op1, function out1 = b_lc_op1
+
+  clone simulink2.Product as B_Lz  with function in1 = b_l_op1, function in2 = b_z_op1, function out1 = b_lz_op1
+
+  clone simulink2.Sum_subtract as B_E_k_ with function in1 = b_x_k__op1, function in2 = b_xhat_k__op1, function out1 = b_e_k__op1
+
+  clone simulink2.Product as B_E2  with function in1 = b_a_lc_op1, function in2 = b_eprev_op1, function out1 = b_e2_op1
+
+  clone simulink2.Delay as B_Eprev with function in1 = b_e_k__op1, function out1 = b_eprev_op1
+
+  clone simulink2.Delay as B_X_k_ with function in1 = b_ax_op1, function out1 = b_x_k__op1
+
+  clone simulink2.Delay as B_Xhat_k_ with function in1 = b_xhat_k_1__op1, function out1 = b_xhat_k__op1
+
+  clone simulink2.Sum_subtract as B_Xhat_k_1_ with function in1 = b_axh_op1, function in2 = b_lz_op1, function out1 = b_xhat_k_1__op1
+
+  clone simulink2.Product as B_Y  with function in1 = b_c_op1, function in2 = b_x_k__op1, function out1 = b_y_op1
+
+  clone simulink2.Product as B_Yhat  with function in1 = b_c_op1, function in2 = b_xhat_k__op1, function out1 = b_yhat_op1
+
+  clone simulink2.Sum_subtract as B_Z with function in1 = b_y_op1, function in2 = b_yhat_op1, function out1 = b_z_op1
+
+ goal GG1b_r2 : forall k: int. b_is_equal_scalar_op1 k = True
+
+end

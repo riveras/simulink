@@ -1,0 +1,237 @@
+theory CompareToZero_neq
+  use import matrix.Matrix
+  use import bool.Bool
+  
+  function in1 int: matrix
+  function out1 int: bool
+
+  axiom c1: forall k:int. mneq (in1 k) m0 = True /\ meq (in1 k) m0 = False <-> out1 k = True 
+  axiom c2: forall k:int. mneq (in1 k) m0 = False /\ meq (in1 k) m0 = True<-> out1 k = False
+end
+
+theory CompareToZero_g
+  use import matrix.Matrix
+  use import bool.Bool
+
+  function in1 int: matrix
+  function out1 int: bool
+  
+  axiom c1: forall k:int. mgt (in1 k) m0 = True /\ mle (in1 k) m0 = False <-> out1 k = True
+  axiom c2: forall k:int. mgt (in1 k) m0 = False /\ mle (in1 k) m0 = True <-> out1 k = False
+end
+
+theory CompareToZero_ge
+  use import matrix.Matrix
+  use import bool.Bool
+
+  function in1 int: matrix
+  function out1 int: bool
+
+  axiom c1: forall k:int. mge (in1 k) m0 = True /\ mlt (in1 k) m0 = False <-> out1 k = True
+  axiom c2: forall k:int. mge (in1 k) m0 = False /\ mlt (in1 k) m0 = True <-> out1 k = False
+end
+
+theory CompareToZero_l
+  use import matrix.Matrix
+  use import bool.Bool
+
+  function in1 int: matrix
+  function out1 int: bool
+
+  axiom c1: forall k:int. mlt (in1 k) m0 = True /\ mge (in1 k) m0 = False <-> out1 k = True
+  axiom c2: forall k:int. mlt (in1 k) m0 = False /\ mge (in1 k) m0 = True <-> out1 k = False
+end
+
+theory CompareToZero_le
+  use import matrix.Matrix
+  use import bool.Bool
+
+  function in1 int: matrix
+  function out1 int: bool
+
+  axiom c1: forall k:int. mle (in1 k) m0 = True /\ mgt (in1 k) m0 = False <-> out1 k = True
+  axiom c2: forall k:int. mle (in1 k) m0 = False /\ mgt (in1 k) m0 = True <-> out1 k = False
+end
+
+theory Concatenate_V
+  use import matrix.Matrix
+  use import int.Int
+
+  function in1 int: matrix
+  function in2 int: matrix
+  function out1 int: matrix
+
+  axiom c1: forall k:int. out1 k = vcat (in1 k) (in2 k)
+  axiom c2: forall k:int. out1 (k-1) = vcat (in1 (k-1)) (in2 (k-1))
+end
+
+theory Concatenate_H
+  use import matrix.Matrix
+  use import int.Int
+
+  function in1 int: matrix
+  function in2 int: matrix
+  function out1 int: matrix
+
+  axiom c1: forall k:int. out1 k = hcat (in1 k) (in2 k)
+  axiom c2: forall k:int. out1 (k-1) = hcat (in1 (k-1)) (in2 (k-1))
+end
+
+
+theory Constant
+ use import matrix.Matrix
+ use import int.Int
+ function out1 int: matrix
+ axiom c1: forall k:int. out1 k = out1 (k+1)
+ axiom c2: forall k:int. out1 k = out1 (k-1)
+ axiom c3: forall k:int. out1 k = out1 (k-2)
+end
+
+theory Delay
+  use import int.Int
+  use import matrix.Matrix
+
+  function in1 int: matrix
+  function out1 int: matrix
+
+  axiom value: forall k:int. out1 k = in1 (k-1)
+end
+
+theory Gain
+  use import int.Int
+  use import matrix.Matrix
+
+  function in1 int : matrix
+  function out1 int : matrix
+  constant s: real
+
+  axiom value: forall k: int. out1 k = mg s (in1 k)
+end
+
+theory MinMax_min
+  use import matrix.Matrix
+
+  function in1 int: matrix
+  function in2 int: matrix
+  function out1 int: matrix
+
+  axiom a1: forall k:int. out1 k = m_min (in1 k) (in2 k)
+end
+
+theory Product
+ use import matrix.Matrix
+
+ function in1 int: matrix
+ function in2 int: matrix
+ function out1 int: matrix
+
+ axiom A1: forall k:int. out1 k = mxm (in1 k) (in2 k)
+end 
+
+theory Quadratic
+ use import matrix.Matrix
+
+ function in1 int: matrix
+ function in2 int: matrix
+ function out1 int: matrix
+
+ axiom A1: forall k:int. out1 k = mq (in1 k) (in2 k)
+end
+
+theory RelationalOperator_le
+ use import matrix.Matrix
+ use import bool.Bool
+
+ function in1 int: matrix
+ function in2 int: matrix
+ function out1 int: bool
+
+ axiom A1: forall k:int. out1 k = True <-> mle (in1 k) (in2 k) = True
+ axiom A2: forall k:int. out1 k = False <-> mle (in1 k) (in2 k) = False
+end
+
+theory RelationalOperator_ge
+ use import matrix.Matrix
+ use import bool.Bool
+
+ function in1 int: matrix
+ function in2 int: matrix
+ function out1 int: bool
+
+ axiom A1: forall k:int. out1 k = True <-> mge (in1 k) (in2 k) = True
+ axiom A2: forall k:int. out1 k = False <-> mge (in1 k) (in2 k) = False
+end
+
+theory Sum_add
+ use import matrix.Matrix
+
+ function in1 int: matrix
+ function in2 int: matrix
+ function out1 int: matrix
+
+ axiom A1: forall k:int. out1 k = m_sum (in1 k) (in2 k)
+end
+
+theory Sum_subtract
+ use import matrix.Matrix
+ use import int.Int
+
+ function in1 int: matrix
+ function in2 int: matrix
+ function out1 int: matrix
+
+ axiom A1: forall k:int. out1 k = m_sub (in1 k) (in2 k)
+ axiom A2: forall k:int. out1 (k-1) = m_sub (in1 (k-1)) (in2 (k-1))
+end
+
+theory Transpose
+  use import matrix.Matrix
+
+  function in1 int: matrix
+  function out1 int: matrix
+
+  axiom A1: forall k:int. out1 k = mt (in1 k)
+end
+
+theory UnitDelay
+  use import int.Int
+  use import matrix.Matrix
+
+  function in1 int: matrix
+  function out1 int: matrix
+
+  axiom value: forall k:int. out1 k = in1 (k-1)
+end
+
+theory Is_pos_def
+ use import matrix.Matrix
+ use import real.RealInfix
+ use import bool.Bool
+
+ function in1 int: matrix
+
+  axiom value: forall k:int, m: matrix. mneq m m0 = True <-> mgt (mq (in1 k) m) m0 = True
+  axiom neg: forall k:int, m:matrix. mlt (mg (-.1.0) (mq (in1 k) m)) m0 = True
+  axiom zero: forall k:int, m: matrix. meq m m0 = True <-> meq (mq (in1 k) m) m0 = True
+end
+
+theory Is_equal_scalar
+  use import matrix.Matrix
+  use import bool.Bool
+
+  function in1 int: matrix
+  function in2 int: matrix
+  function out1 int: bool
+  
+  axiom value1: forall k:int.  (in1 k) = (in2 k) <-> out1 k = True
+  axiom value2: forall k:int. (in1 k) <> (in2 k) <-> out1 k = False
+end
+
+theory MatrixZero
+  use import matrix.Matrix
+
+  function out1 int: matrix
+
+  axiom value: forall k:int. out1 k = m0
+end
+

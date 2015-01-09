@@ -1,0 +1,80 @@
+theory M_optimiser
+ use import int.Int
+ use import real.RealInfix
+ use import matrix.Matrix
+ use import bool.Bool
+ function b__a_bk__tp_a_bk__op1 int: matrix
+ function b_a_op1 int: matrix
+ function b_a_bk_op1 int: matrix
+ function b_ax_op1 int: matrix
+ function b_b_op1 int: matrix
+ function b_bk_op1 int: matrix
+ function b_bu_op1 int: matrix
+ function b_diff_op1 int: matrix
+ function b_gain1_op1 int: matrix
+ function b_gain2_op1 int: matrix
+ function b_is_equal_op1 int: bool
+ function b_is_pos_def1_op1 int: matrix
+ function b_is_pos_def_p_op1 int: matrix
+ function b_k_op1 int: matrix
+ function b_kx_op1 int: matrix
+ function b_p_op1 int: matrix
+ function b_q_op1 int: matrix
+ function b_v_op1 int: matrix
+ function b_v_k_1__op1 int: matrix
+ function b_v1_op1 int: matrix
+ function b_x_k__op1 int: matrix
+ function b_x_k_1__op1 int: matrix
+ function b_xm_op1 int: matrix
+
+  clone simulink2.Quadratic as B__a_bk__tp_a_bk_ with function in1 = b_p_op1, function in2 = b_a_bk_op1, function out1 = b__a_bk__tp_a_bk__op1
+
+  clone simulink2.Constant as B_A with function out1 = b_a_op1
+
+  clone simulink2.Sum_add as B_A_bk with function in1 = b_a_op1, function in2 = b_bk_op1, function out1 = b_a_bk_op1
+
+  clone simulink2.Product as B_Ax  with function in1 = b_a_op1, function in2 = b_x_k__op1, function out1 = b_ax_op1
+
+  clone simulink2.Constant as B_B with function out1 = b_b_op1
+
+  clone simulink2.Product as B_Bk  with function in1 = b_b_op1, function in2 = b_k_op1, function out1 = b_bk_op1
+
+  clone simulink2.Product as B_Bu  with function in1 = b_b_op1, function in2 = b_kx_op1, function out1 = b_bu_op1
+
+  clone simulink2.Sum_subtract as B_Diff with function in1 = b_v_op1, function in2 = b_v_k_1__op1, function out1 = b_diff_op1
+
+ clone simulink2.Gain as B_Gain1 with function in1 = b_q_op1, function out1 =  b_gain1_op1
+  axiom g_B_Gain1: B_Gain1.s = -.1.000000
+
+ clone simulink2.Gain as B_Gain2
+  axiom g_B_Gain2: B_Gain2.s = -.1.000000
+
+ clone simulink2.Is_equal_scalar as B_Is_equal with function in1 = b_diff_op1, function in2 = b_v1_op1, function out1 = b_is_equal_op1
+
+  clone simulink2.Is_pos_def_TorF as B_Is_pos_def1 with function in1 = b_gain1_op1
+
+  clone simulink2.Is_pos_def_TorF as B_Is_pos_def_p with function in1 = b_p_op1
+
+  clone simulink2.Constant as B_K with function out1 = b_k_op1
+
+  clone simulink2.Product as B_Kx  with function in1 = b_k_op1, function in2 = b_x_k__op1, function out1 = b_kx_op1
+
+  clone simulink2.Constant as B_P with function out1 = b_p_op1
+
+  clone simulink2.Sum_subtract as B_Q with function in1 = b__a_bk__tp_a_bk__op1, function in2 = b_p_op1, function out1 = b_q_op1
+
+  clone simulink2.Quadratic as B_V with function in1 = b_p_op1, function in2 = b_x_k__op1, function out1 = b_v_op1
+
+  clone simulink2.Delay as B_V_k_1_ with function in1 = b_v_op1, function out1 = b_v_k_1__op1
+
+  clone simulink2.Quadratic as B_V1 with function in1 = b_q_op1, function in2 = b_xm_op1, function out1 = b_v1_op1
+
+  clone simulink2.Delay as B_X_k_ with function in1 = b_x_k_1__op1, function out1 = b_x_k__op1
+
+  clone simulink2.Sum_subtract as B_X_k_1_ with function in1 = b_ax_op1, function in2 = b_bu_op1, function out1 = b_x_k_1__op1
+
+  clone simulink2.Delay as B_Xm with function in1 = b_x_k__op1, function out1 = b_xm_op1
+
+ goal GG1b_r1_2_1 : forall k: int. b_is_equal_op1 k = True
+
+end

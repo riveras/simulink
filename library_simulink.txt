@@ -1,0 +1,16 @@
+Product\t  clone simulink2.Product as <<...>>Name_block<<...>>  with function in1 = <<...>>input1<<...>>, function in2 = <<...>>input2<<...>>, function out1 = <<...>>output1<<...>>\n
+UnitDelay\t  clone simulink2.UnitDelay as <<...>>Name_block<<...>> with function in1 = <<...>>input1<<...>>, function out1 = <<...>>output1<<...>>\n
+Sum\t  clone simulink2.Sum_<<...>>sum_type<<...>> as <<...>>Name_block<<...>> with function in1 = <<...>>input1<<...>>, function in2 = <<...>>input2<<...>>, function out1 = <<...>>output1<<...>>\n
+Constant\t  clone simulink2.Constant as <<...>>Name_block<<...>> with function out1 = <<...>>output1<<...>>\n
+Delay\t  clone simulink2.Delay as <<...>>Name_block<<...>> with function in1 = <<...>>input1<<...>>, function out1 = <<...>>output1<<...>>\n
+From\t  axiom From_<<...>>name_block<<...>>: forall k:int. <<...>>output1<<...>> k = <<...>>goto_find<<...>> k<<...>> <<...>>\n\t 
+Quadratic\t  clone simulink2.Quadratic as <<...>>Name_block<<...>> with function in1 = <<...>>input2<<...>>, function in2 = <<...>>input1<<...>>, function out1 = <<...>>output1<<...>>\n
+Is_equal_scalar\t clone simulink2.Is_equal_scalar as <<...>>Name_block<<...>> with function in1 = <<...>>input1<<...>>, function in2 = <<...>>input2<<...>>, function out1 = <<...>>output1<<...>>\n
+Gain\t clone simulink2.Gain as <<...>>Name_block<<...>> with function in1 = <<...>>input1<<...>>, function out1 =  <<...>>output1<<...>>\n  axiom g_<<...>>Name_block<<...>>: <<...>>Name_block<<...>>.s = <<...>>gain_value<<...>>\n 
+Is_pos_def\t  clone simulink2.Is_pos_def as <<...>>Name_block<<...>> with function in1 = <<...>>input1<<...>>\n
+Compare To Zero\t  clone simulink2.CompareToZero_<<...>>sign_type_ctz<<...>> as <<...>>Name_block<<...>> with function in1 = <<...>>input1<<...>>, function out1 = <<...>>output1<<...>>\n
+Transpose\t  clone simulink2.Transpose as <<...>>Name_block<<...>> with function in1 = <<...>>input1<<...>>, function out1 = <<...>>output1<<...>>\n
+Concatenate\t  clone simulink2.Concatenate_<<...>>VH<<...>> as <<...>>Name_block<<...>> with function in1 = <<...>>input1<<...>>, function in2 = <<...>>input2<<...>>, function out1 = <<...>>output1<<...>>\n
+m0\t  clone simulink2.MatrixZero as <<...>>Name_block<<...>> with function out1 = <<...>>output1<<...>>\n
+RelationalOperator\t  clone simulink2.RelationalOperator_<<...>>sign_type_rel<<...>> as <<...>>Name_block<<...>> with function in1 = <<...>>input1<<...>>, function in2 = <<...>>input2<<...>>, function out1 = <<...>>output1<<...>>\n
+MinMax\t  clone simulink2.MinMax_<<...>>minormax<<...>> as <<...>>Name_block<<...>> with function in1 = <<...>>input1<<...>>, function in2 = <<...>>input2<<...>>, function out1 = <<...>>output1<<...>>\n

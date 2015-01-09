@@ -1,0 +1,5 @@
+This repository contains a MATLAB script to translate automatically from Simulink diagrams into Why code (for the Why3 theorem proving tool). A manual of the script is included.
+
+The folder "Examples" contains illustrative examples on the verification of high-level properties of control systems implemented in Simulink, through numerical analysis or theorem proving in Why3. Other Simulink files (*.mdl) are needed in order to make the examples work. 
+
+

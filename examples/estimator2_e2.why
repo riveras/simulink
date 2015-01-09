@@ -1,0 +1,102 @@
+theory M_estimator2
+ use import int.Int
+ use import real.RealInfix
+ use import matrix.Matrix
+ use import bool.Bool
+ function b_a_op1 int: matrix
+ function b_a_bk_op1 int: matrix
+ function b_a_lc_op1 int: matrix
+ function b_ax_op1 int: matrix
+ function b_axh_op1 int: matrix
+ function b_b_op1 int: matrix
+ function b_bk_op1 int: matrix
+ function b_bu_op1 int: matrix
+ function b_c_op1 int: matrix
+ function b_cx_op1 int: matrix
+ function b_cxh_op1 int: matrix
+ function b_is_equal_scalar_op1 int: bool
+ function b_k_op1 int: matrix
+ function b_kx_op1 int: matrix
+ function b_l_op1 int: matrix
+ function b_lc_op1 int: matrix
+ function b_lz_op1 int: matrix
+ function b_matrixconcatenate1_op1 int: matrix
+ function b_matrixconcatenate2_op1 int: matrix
+ function b_matrixconcatenate3_op1 int: matrix
+ function b_mwprev_op1 int: matrix
+ function b_e_k__op1 int: matrix
+ function b_w_op1 int: matrix
+ function b_wprev_op1 int: matrix
+ function b_x_k__op1 int: matrix
+ function b_x_k_1__op1 int: matrix
+ function b_xhat_k__op1 int: matrix
+ function b_xhat_k_1__op1 int: matrix
+ function b_xhb_op1 int: matrix
+ function b_z_op1 int: matrix
+ function b_zeros_op1 int: matrix
+
+  clone simulink2.Constant as B_A with function out1 = b_a_op1
+
+  clone simulink2.Sum_subtract as B_A_bk with function in1 = b_a_op1, function in2 = b_bk_op1, function out1 = b_a_bk_op1
+
+  clone simulink2.Sum_subtract as B_A_lc with function in1 = b_a_op1, function in2 = b_lc_op1, function out1 = b_a_lc_op1
+
+  clone simulink2.Product as B_Ax  with function in1 = b_a_op1, function in2 = b_x_k__op1, function out1 = b_ax_op1
+
+  clone simulink2.Product as B_Axh  with function in1 = b_a_op1, function in2 = b_xhat_k__op1, function out1 = b_axh_op1
+
+  clone simulink2.Constant as B_B with function out1 = b_b_op1
+
+  clone simulink2.Product as B_Bk  with function in1 = b_b_op1, function in2 = b_k_op1, function out1 = b_bk_op1
+
+  clone simulink2.Product as B_Bu  with function in1 = b_b_op1, function in2 = b_kx_op1, function out1 = b_bu_op1
+
+  clone simulink2.Constant as B_C with function out1 = b_c_op1
+
+  clone simulink2.Product as B_Cx  with function in1 = b_c_op1, function in2 = b_x_k__op1, function out1 = b_cx_op1
+
+  clone simulink2.Product as B_Cxh  with function in1 = b_c_op1, function in2 = b_xhat_k__op1, function out1 = b_cxh_op1
+
+ clone simulink2.Is_equal_scalar as B_Is_equal_scalar with function in1 = b_w_op1, function in2 = b_mwprev_op1, function out1 = b_is_equal_scalar_op1
+
+  clone simulink2.Constant as B_K with function out1 = b_k_op1
+
+  clone simulink2.Product as B_Kx  with function in1 = b_k_op1, function in2 = b_xhat_k__op1, function out1 = b_kx_op1
+
+  clone simulink2.Constant as B_L with function out1 = b_l_op1
+
+  clone simulink2.Product as B_Lc  with function in1 = b_l_op1, function in2 = b_c_op1, function out1 = b_lc_op1
+
+  clone simulink2.Product as B_Lz  with function in1 = b_l_op1, function in2 = b_z_op1, function out1 = b_lz_op1
+
+  clone simulink2.Concatenate_H as B_Matrixconcatenate1 with function in1 = b_a_bk_op1, function in2 = b_bk_op1, function out1 = b_matrixconcatenate1_op1
+
+  clone simulink2.Concatenate_H as B_Matrixconcatenate2 with function in1 = b_zeros_op1, function in2 = b_a_lc_op1, function out1 = b_matrixconcatenate2_op1
+
+  clone simulink2.Concatenate_V as B_Matrixconcatenate3 with function in1 = b_matrixconcatenate1_op1, function in2 = b_matrixconcatenate2_op1, function out1 = b_matrixconcatenate3_op1
+
+  clone simulink2.Product as B_Mwprev  with function in1 = b_matrixconcatenate3_op1, function in2 = b_wprev_op1, function out1 = b_mwprev_op1
+
+  clone simulink2.Sum_subtract as B_E_k_ with function in1 = b_x_k__op1, function in2 = b_xhat_k__op1, function out1 = b_e_k__op1
+
+  clone simulink2.Concatenate_V as B_W with function in1 = b_x_k__op1, function in2 = b_e_k__op1, function out1 = b_w_op1
+
+  clone simulink2.Delay as B_Wprev with function in1 = b_w_op1, function out1 = b_wprev_op1
+
+  clone simulink2.Delay as B_X_k_ with function in1 = b_x_k_1__op1, function out1 = b_x_k__op1
+
+  clone simulink2.Sum_subtract as B_X_k_1_ with function in1 = b_ax_op1, function in2 = b_bu_op1, function out1 = b_x_k_1__op1
+
+  clone simulink2.Delay as B_Xhat_k_ with function in1 = b_xhat_k_1__op1, function out1 = b_xhat_k__op1
+
+  clone simulink2.Sum_add as B_Xhat_k_1_ with function in1 = b_xhb_op1, function in2 = b_lz_op1, function out1 = b_xhat_k_1__op1
+
+  clone simulink2.Sum_subtract as B_Xhb with function in1 = b_axh_op1, function in2 = b_bu_op1, function out1 = b_xhb_op1
+
+  clone simulink2.Sum_add as B_Z with function in1 = b_cx_op1, function in2 = b_cxh_op1, function out1 = b_z_op1
+
+  clone simulink2.MatrixZero as B_Zeros with function out1 = b_zeros_op1
+
+ goal GG1b_r3 : forall k: int. b_is_equal_scalar_op1 k = True
+
+end

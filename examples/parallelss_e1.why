@@ -1,0 +1,54 @@
+theory M_parallelss
+ use import int.Int
+ use import real.RealInfix
+ use import matrix.Matrix
+ use import bool.Bool
+ function b_0a2_op1 int: matrix
+ function b_a1_op1 int: matrix
+ function b_a10_op1 int: matrix
+ function b_a1x1_op1 int: matrix
+ function b_a2_op1 int: matrix
+ function b_a2x2_op1 int: matrix
+ function b_add_op1 int: matrix
+ function b_is_equal_op1 int: bool
+ function b_m_op1 int: matrix
+ function b_mx_op1 int: matrix
+ function b_x1x2_op1 int: matrix
+ function b_x1_k__op1 int: matrix
+ function b_x1x2_k_1__op1 int: matrix
+ function b_x2_k__op1 int: matrix
+ function b_zeros_op1 int: matrix
+
+  clone simulink2.Concatenate_H as B_0a2 with function in1 = b_zeros_op1, function in2 = b_a2_op1, function out1 = b_0a2_op1
+
+  clone simulink2.Constant as B_A1 with function out1 = b_a1_op1
+
+  clone simulink2.Concatenate_H as B_A10 with function in1 = b_a1_op1, function in2 = b_zeros_op1, function out1 = b_a10_op1
+
+  clone simulink2.Product as B_A1x1  with function in1 = b_a1_op1, function in2 = b_x1_k__op1, function out1 = b_a1x1_op1
+
+  clone simulink2.Constant as B_A2 with function out1 = b_a2_op1
+
+  clone simulink2.Product as B_A2x2  with function in1 = b_a2_op1, function in2 = b_x2_k__op1, function out1 = b_a2x2_op1
+
+  clone simulink2.Sum_subtract as B_Add with function in1 = b_x1_k__op1, function in2 = b_x2_k__op1, function out1 = b_add_op1
+
+ clone simulink2.Is_equal_scalar as B_Is_equal with function in1 = b_add_op1, function in2 = b_mx_op1, function out1 = b_is_equal_op1
+
+  clone simulink2.Concatenate_V as B_M with function in1 = b_a10_op1, function in2 = b_0a2_op1, function out1 = b_m_op1
+
+  clone simulink2.Product as B_Mx  with function in1 = b_m_op1, function in2 = b_x1x2_k_1__op1, function out1 = b_mx_op1
+
+  clone simulink2.Concatenate_V as B_X1x2 with function in1 = b_x1_k__op1, function in2 = b_x2_k__op1, function out1 = b_x1x2_op1
+
+  clone simulink2.Delay as B_X1_k_ with function in1 = b_a1x1_op1, function out1 = b_x1_k__op1
+
+  clone simulink2.Delay as B_X1x2_k_1_ with function in1 = b_x1x2_op1, function out1 = b_x1x2_k_1__op1
+
+  clone simulink2.Delay as B_X2_k_ with function in1 = b_a2x2_op1, function out1 = b_x2_k__op1
+
+  clone simulink2.MatrixZero as B_Zeros with function out1 = b_zeros_op1
+
+ goal GG1b_r4 : forall k: int. b_is_equal_op1 k = True
+
+end
