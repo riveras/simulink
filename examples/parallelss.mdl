@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.10"
+    ComputedModelVersion    "1.12"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -66,9 +66,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "dejanira"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Dec 30 11:07:23 2014"
-  RTWModifiedTimeStamp	  341838441
-  ModelVersionFormat	  "1.%<AutoIncrement:10>"
+  LastModifiedDate	  "Mon Jan 12 15:29:41 2015"
+  RTWModifiedTimeStamp	  342977381
+  ModelVersionFormat	  "1.%<AutoIncrement:12>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -874,7 +874,7 @@ Model {
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
     ScreenColor		    "white"
-    PaperOrientation	    "landscape"
+    PaperOrientation	    "portrait"
     PaperPositionMode	    "auto"
     PaperType		    "A4"
     PaperUnits		    "centimeters"
@@ -883,7 +883,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "23"
+    SIDHighWatermark	    "24"
     Block {
       BlockType		      Concatenate
       Name		      "0A2"
@@ -1003,7 +1003,7 @@ Model {
     }
     Block {
       BlockType		      Reference
-      Name		      "R3"
+      Name		      "R4"
       SID		      "23"
       Ports		      [1]
       Position		      [810, 331, 910, 409]
@@ -1270,7 +1270,7 @@ Model {
     Line {
       SrcBlock		      "Is_equal"
       SrcPort		      1
-      DstBlock		      "R3"
+      DstBlock		      "R4"
       DstPort		      1
     }
     Line {
@@ -1279,6 +1279,15 @@ Model {
       Points		      [10, 0]
       DstBlock		      "Is_equal"
       DstPort		      2
+    }
+    Annotation {
+      SID		      "24"
+      Name		      "E3"
+      Position		      [486, 241]
+      ForegroundColor	      "red"
+      FontName		      "Sans Serif"
+      FontSize		      12
+      FontWeight	      "bold"
     }
   }
 }
