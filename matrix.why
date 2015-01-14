@@ -1,3 +1,5 @@
+(* Created by Dejanira Araiza-Illan and Arthur Richards, UoB, 2014 *)
+
 theory Matrix
 
   type matrix

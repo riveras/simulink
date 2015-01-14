@@ -1,3 +1,5 @@
+(* Created by Dejanira Araiza-Illan, UoB, 2014 *)
+
 theory CompareToZero_neq
   use import matrix.Matrix
   use import bool.Bool
