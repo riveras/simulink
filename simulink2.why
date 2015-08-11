@@ -97,7 +97,38 @@ theory Delay
   function out1 int: matrix
 
   axiom value: forall k:int. out1 k = in1 (k-1)
+
 end
+
+theory Delay_bool
+  use import int.Int
+  use import bool.Bool
+  use import matrix.Matrix
+
+  function in1 int: bool
+  function out1 int: bool
+
+  axiom value: forall k:int. out1 k = in1 (k-1)
+
+end
+
+theory Feasibility
+  use import int.Int
+  use import bool.Bool
+  use import matrix.Matrix
+
+  function in1 int : matrix
+  function in2 int : matrix
+  function in3 int : matrix
+  function in4 int : matrix
+  function out1 int : bool
+  function out2 int : matrix
+  
+  axiom value: forall k:int. out1 k = True <-> mle (mxm (in2 k) (in3 k)) (in1 k) = True
+  axiom value2: forall k:int. out2 k = feas (in2 k) (in3 k) (in1 k)
+ axiom delay: forall k:int. (mle (mxm (in2 k) (in3 k)) (in1 k) = True <-> mle (mxm (in2 (k-1)) (in3 (k-1))) (in1 (k-1)) = True ) <-> mle (in4 k) m0 = True 
+end
+
 
 theory Gain
   use import int.Int
@@ -108,6 +139,17 @@ theory Gain
   constant s: real
 
   axiom value: forall k: int. out1 k = mg s (in1 k)
+end
+
+theory ManualSwitch
+  use import int.Int
+  use import matrix.Matrix
+
+  function in1 int: matrix
+  function in2 int: matrix
+  function out1 int: matrix
+  
+  axiom value: forall k:int. out1 k = sy_or_sy (in1 k) (in2 k)
 end
 
 theory MinMax_min
@@ -164,6 +206,19 @@ theory RelationalOperator_ge
  axiom A2: forall k:int. out1 k = False <-> mge (in1 k) (in2 k) = False
 end
 
+
+theory RelationalOperator_eq
+ use import matrix.Matrix
+ use import bool.Bool
+
+ function in1 int: matrix
+ function in2 int: matrix
+ function out1 int: bool
+
+ axiom A1: forall k:int. out1 k = True <-> (in1 k) = (in2 k) 
+ axiom A2: forall k:int. out1 k = False <-> (in1 k) <> (in2 k) 
+end
+
 theory Sum_add
  use import matrix.Matrix
 
@@ -205,7 +260,7 @@ theory UnitDelay
   axiom value: forall k:int. out1 k = in1 (k-1)
 end
 
-theory Is_pos_def
+theory Is_pos_def_TorF
  use import matrix.Matrix
  use import real.RealInfix
  use import bool.Bool
@@ -215,6 +270,37 @@ theory Is_pos_def
   axiom value: forall k:int, m: matrix. mneq m m0 = True <-> mgt (mq (in1 k) m) m0 = True
   axiom neg: forall k:int, m:matrix. mlt (mg (-.1.0) (mq (in1 k) m)) m0 = True
   axiom zero: forall k:int, m: matrix. meq m m0 = True <-> meq (mq (in1 k) m) m0 = True
+end
+
+theory Is_pos_def_T
+ use import matrix.Matrix
+ use import real.RealInfix
+ use import bool.Bool
+
+ function in1 int: matrix
+
+  axiom value: forall k:int, m: matrix. mneq m m0 = True <-> mgt (mq (in1 k) m) m0 = True 
+  axiom neg: forall k:int, m:matrix. mgt (mq (in1 k) m) m0 = True <-> mlt (mg (-.1.0) (mq (in1 k) m)) m0 = True
+  axiom zero: forall k:int, m: matrix. meq m m0 = True <-> meq (mq (in1 k) m) m0 = True
+end
+
+theory Is_pos_def_F
+ use import matrix.Matrix
+  use import bool.Bool
+
+ function in1 int: matrix
+
+  axiom value: forall k:int, m:matrix. mgt (mq (in1 k) m) m0 = False
+end
+
+theory Is_neg_semidef_TorF
+  use import matrix.Matrix
+  use import bool.Bool
+
+  function in1 int: matrix
+
+  axiom value: forall k:int. mle (in1 k) m0 = True
+
 end
 
 theory Is_equal_scalar
@@ -236,4 +322,13 @@ theory MatrixZero
 
   axiom value: forall k:int. out1 k = m0
 end
+
+theory MatrixEye
+  use import matrix.Matrix
+
+  function out1 int: matrix
+
+  axiom value: forall k:int. out1 k = meye
+end
+
 

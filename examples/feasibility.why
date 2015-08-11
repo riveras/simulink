@@ -1,0 +1,60 @@
+theory M_feasibility
+ use import int.Int
+ use import real.RealInfix
+ use import matrix.Matrix
+ use import bool.Bool
+ function b_a_op1 int: matrix
+ function b_bige_op1 int: matrix
+ function b_e_op1 int: matrix
+ function b_ex0_op1 int: matrix
+ function b_ez_op1 int: matrix
+ function b_ezplus_op1 int: matrix
+ function b_matrixconcatenate_op1 int: matrix
+ function b_matrixconcatenate1_op1 int: matrix
+ function b_matrixconcatenate2_op1 int: matrix
+ function b_matrixconcatenate3_op1 int: matrix
+ function b_relationaloperator_op1 int: bool
+ function b_relationaloperator1_op1 int: matrix
+ function b_eye_op1 int: matrix
+ function b_g_op1 int: matrix
+ function b_m0_op1 int: matrix
+ function b_z_k__op1 int: matrix
+ function b_z_k_1__op1 int: matrix
+
+  clone simulink2.Concatenate_V as B_A with function in1 = b_matrixconcatenate1_op1, function in2 = b_matrixconcatenate_op1, function out1 = b_a_op1
+
+  clone simulink2.Concatenate_V as B_Bige with function in1 = b_matrixconcatenate2_op1, function in2 = b_matrixconcatenate3_op1, function out1 = b_bige_op1
+
+  clone simulink2.Constant as B_E with function out1 = b_e_op1
+
+  clone simulink2.Product as B_Ex0  with function in1 = b_e_op1, function in2 = b_m0_op1, function out1 = b_ex0_op1
+
+  clone simulink2.Product as B_Ez  with function in1 = b_bige_op1, function in2 = b_z_k__op1, function out1 = b_ez_op1
+
+  clone simulink2.Product as B_Ezplus  with function in1 = b_bige_op1, function in2 = b_z_k_1__op1, function out1 = b_ezplus_op1
+
+  clone simulink2.Concatenate_H as B_Matrixconcatenate with function in1 = b_m0_op1, function in2 = b_m0_op1, function out1 = b_matrixconcatenate_op1
+
+  clone simulink2.Concatenate_H as B_Matrixconcatenate1 with function in1 = b_m0_op1, function in2 = b_eye_op1, function out1 = b_matrixconcatenate1_op1
+
+  clone simulink2.Concatenate_H as B_Matrixconcatenate2 with function in1 = b_e_op1, function in2 = b_m0_op1, function out1 = b_matrixconcatenate2_op1
+
+  clone simulink2.Concatenate_H as B_Matrixconcatenate3 with function in1 = b_m0_op1, function in2 = b_e_op1, function out1 = b_matrixconcatenate3_op1
+
+  clone simulink2.RelationalOperator_le as B_Relationaloperator with function in1 = b_ezplus_op1, function in2 = b_ez_op1, function out1 = b_relationaloperator_op1
+
+  clone simulink2.RelationalOperator_le as B_Relationaloperator1 with function in1 = b_ex0_op1, function in2 = b_g_op1, function out1 = b_relationaloperator1_op1
+
+  clone simulink2.MatrixEye as B_Eye with function out1 = b_eye_op1
+
+  clone simulink2.Constant as B_G with function out1 = b_g_op1
+
+  clone simulink2.MatrixZero as B_M0 with function out1 = b_m0_op1
+
+  clone simulink2.UnitDelay as B_Z_k_ with function in1 = b_z_k_1__op1, function out1 = b_z_k__op1
+
+  clone simulink2.Product as B_Z_k_1_  with function in1 = b_a_op1, function in2 = b_z_k__op1, function out1 = b_z_k_1__op1
+
+ goal GG1b_r6_1 : forall k: int. b_relationaloperator_op1 k = True
+
+end

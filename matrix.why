@@ -37,7 +37,7 @@ theory Matrix
   lemma matsub11: forall a b c d: matrix. m_sum (m_sub (mxm a b) (mxm a c)) (m_sub (mxm d c) (mxm d b)) = m_sum (m_sub (mxm a b) (mxm d b)) (m_sub (mxm d c) (mxm a c))
 (* For estimator controller complex *) 
   lemma matsub12: forall a b c d: matrix. m_sub (mxm a b) (mxm c d) = m_sum (mxm (m_sub a c) b) (mxm c (m_sub b d))
-  lemma matsub13: forall a b c d: matrix. m_sub (m_sub (mxm a b) (mxm a d)) (m_sub (mxm c b) (mxm c d)) = mxm (m_sub a c) (m_sub b d)
+  lemma matsub13: forall a b c d: matrix. m_sub (m_sub (mxm a b) (mxm a d)) (m_sub (mxm c b) (mxm c d)) = mxm (m_sub a c) (m_sub b d) 
 
 
   (* quadratic forms *)
@@ -53,11 +53,9 @@ theory Matrix
   lemma gainminus1: forall a b:matrix. mg (-.1.0) (m_sub a b) = m_sub b a
 
   (* matrix zero *) 
-  function m0 : matrix (*Not for simple systems: simple controller, optimiser, simple estimator2*)
-  (*lemma sumzero: forall a: matrix. m_sum a m0 = a
-  lemma sumzero2: forall a: matrix. m_sum m0 a = a
-  lemma multzero: forall a: matrix. mxm a m0 = m0
-  lemma multzero2: forall a: matrix. mxm m0 a = m0 *)
+  function m0 : matrix 
+  
+  function meye : matrix
 
   use import bool.Bool
   (* matrix equality and comparisons *)
@@ -74,21 +72,45 @@ theory Matrix
   lemma catmult1: forall a b c d : matrix. mxm (hcat a b) (vcat c d) = m_sum (mxm a c) (mxm b d)
   lemma catsum: forall a b c d: matrix. m_sum (vcat a b) (vcat c d) = vcat (m_sum a c) (m_sum b d)
   lemma catdistr: forall a b c: matrix. mxm (vcat a b) c = vcat (mxm a c) (mxm b c)  
-(* Not for series *) 
+  (* systems in series*) 
   lemma matmult4: forall a b c d: matrix. mxm (hcat (m_sum a d) (m_sum a d)) (vcat b c) = m_sum (m_sum (m_sum (mxm a b) (mxm a c)) (mxm d b)) (mxm d c) 
   lemma matmult5: forall a b c d: matrix. mxm (hcat (m_sub a d) (m_sub d a)) (vcat b c) = m_sum (m_sub (m_sub (mxm a b) (mxm a c)) (mxm d c)) (mxm d b) 
   lemma matmult6: forall a b c d: matrix. mxm (hcat (m_sub a d) (m_sub d a)) (vcat b c) = m_sum (m_sub (mxm a b) (mxm d b)) (m_sub (mxm d c) (mxm a c))
   lemma zeroescat: forall a b c d e: matrix. vcat (mxm a d) (mxm (hcat b c) (vcat d e)) = vcat (mxm (hcat a m0) (vcat d e)) (mxm (hcat b c) (vcat d e)) 
-  lemma catcat: forall a b c d e: matrix. vcat (mxm (hcat a m0) (vcat d e)) (mxm (hcat b c) (vcat d e)) = mxm (vcat (hcat a m0) (hcat b c)) (vcat d e)
-(*estimator 5 and above or negative gains alone *)
+  lemma catcat: forall a b c d e: matrix. vcat (mxm (hcat a m0) (vcat d e)) (mxm (hcat b c) (vcat d e)) = mxm (vcat (hcat a m0) (hcat b c)) (vcat d e) 
+  (*estimator*)
   lemma cat1: forall a b c d: matrix. m_sub (mxm a b) (mxm c d) = mxm (hcat a (mg (-.1.0) c)) (vcat b d) 
-(*estimator 7 and above *)
   lemma cat2: forall a b c d: matrix. m_sum (mxm (m_sub a c) b) (mxm c (m_sub b d)) = mxm (hcat (m_sub a c) c) (vcat b (m_sub b d))
   lemma catzero: forall a b c d: matrix. mxm (m_sub a c) (m_sub b d) = mxm (hcat m0 (m_sub a c)) (vcat b (m_sub b d)) 
-  lemma catzero2: forall a b c d: matrix. m_sum (mxm a c) (mxm b d) = mxm (vcat (hcat a m0) (hcat m0 b)) (vcat c d)
+  lemma catzero2: forall a b c d: matrix. m_sum (mxm a c) (mxm b d) = mxm (vcat (hcat a m0) (hcat m0 b)) (vcat c d) 
+ 
+  (*mpc-like system*)
+  lemma catcat2: forall a b c d: matrix. vcat (hcat a b) (hcat c d) = hcat (vcat a c) (vcat b d) 
+  lemma catcatmult: forall a b c d e f g h: matrix. mxm (vcat (hcat a b) (hcat c d)) (hcat (vcat e g) (vcat f h)) = vcat (hcat (mxm (hcat a b) (vcat e g)) (mxm (hcat a b) (vcat f h))) (hcat (mxm (hcat c d) (vcat e g)) (mxm (hcat c d) (vcat f h))) 
+  lemma catcatmult2: forall a: matrix. vcat (hcat (mxm (hcat a m0) (vcat m0 m0)) (mxm (hcat a m0) (vcat meye m0))) (hcat (mxm (hcat m0 a) (vcat m0 m0)) (mxm (hcat m0 a) (vcat meye m0))) = vcat (hcat m0 a) (hcat m0 m0) 
+  lemma catcatmult3: forall a: matrix. vcat (hcat (mxm (hcat a m0) (vcat meye m0)) (mxm (hcat a m0) (vcat m0 m0))) (hcat (mxm (hcat m0 a) (vcat meye m0)) (mxm (hcat m0 a) (vcat m0 m0))) = vcat (hcat a m0) (hcat m0 m0) 
+  lemma mlecat0: forall a b:matrix. mle (mxm (vcat (hcat m0 a) (hcat m0 m0)) (b)) (mxm (vcat (hcat a m0) (hcat m0 a)) (b)) = True
+  lemma mlecat1: forall a b:matrix. mle (mxm (vcat (hcat a m0) (hcat m0 m0)) (b)) (mxm (vcat (hcat a m0) (hcat m0 a)) (b)) = True
 
- (*min and max*)
- function m_min matrix matrix : matrix
- lemma min1: forall a b: matrix. m_min a b = a <-> mle a b = True
- lemma min2: forall a b: matrix. m_min a b = b <-> mle b a = True 
+
+  (*min and max*)
+  function m_min matrix matrix : matrix
+ (* lemma min1: forall a b: matrix. m_min a b = a <-> mle a b = True
+  lemma min2: forall a b: matrix. m_min a b = b <-> mle b a = True 
+  lemma min3: forall a b c: matrix. m_min a b = a /\ mle a c = True <-> mle a c = True
+  lemma min4: forall a b c: matrix. m_min a b = b /\ mle a c = True <-> mle b c = True *)
+
+ (*switching*)
+  function sy_or_sy matrix matrix : matrix
+  lemma sors1: forall a b:matrix. sy_or_sy a b = sy_or_sy b a
+  lemma sors2: forall a b c:matrix. mq c (sy_or_sy a b) = sy_or_sy (mq c a) (mq c b)
+  lemma sors3: forall a b c d:matrix. m_sub (sy_or_sy a b) (sy_or_sy c d) = sy_or_sy (m_sub a c) (m_sub b d)
+  lemma sors4: forall a b c d:matrix. m_sum (sy_or_sy a b) (sy_or_sy c d) = sy_or_sy (m_sum a c) (m_sum b d) 
+  lemma sors5: forall a b:matrix. mt (sy_or_sy a b) = sy_or_sy (mt a) (mt b)
+  lemma sors6: forall a b c:matrix. mxm (sy_or_sy a b) c = sy_or_sy (mxm a c) (mxm b c)
+  lemma sors7: forall a b c d:matrix. mxm (sy_or_sy a b) (sy_or_sy c d) = sy_or_sy (mxm a c) (mxm b d)
+  lemma sors8: forall a b c:matrix. m_sub (sy_or_sy a b) c = sy_or_sy (m_sub a c) (m_sub b c)
+  lemma sors9: forall a b c d:matrix. mq (sy_or_sy a b) (sy_or_sy c d) = sy_or_sy (mq a c) (mq b d)
+  lemma sors10: forall a b c:matrix. mq (sy_or_sy a b) c = sy_or_sy (mq a c) (mq b c)
+
 end  

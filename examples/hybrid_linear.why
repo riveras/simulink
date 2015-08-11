@@ -1,0 +1,83 @@
+theory M_hybrid_linear
+ use import int.Int
+ use import real.RealInfix
+ use import matrix.Matrix
+ use import bool.Bool
+ function b_a1_op1 int: matrix
+ function b_a1tpa1_op1 int: matrix
+ function b_a1tpa1_p_op1 int: matrix
+ function b_a2_op1 int: matrix
+ function b_a2tpa2_op1 int: matrix
+ function b_a2tpa2_p_op1 int: matrix
+ function b_gain_op1 int: matrix
+ function b_gain1_op1 int: matrix
+ function b_is_equal_op1 int: bool
+ function b_is_pos_def_op1 int: matrix
+ function b_is_pos_def1_op1 int: matrix
+ function b_is_pos_def2_op1 int: matrix
+ function b_manualswitch_op1 int: matrix
+ function b_manualswitch1_op1 int: matrix
+ function b_p_op1 int: matrix
+ function b_product_op1 int: matrix
+ function b_product1_op1 int: matrix
+ function b_v_op1 int: matrix
+ function b_vprev_op1 int: matrix
+ function b_vdiff_op1 int: matrix
+ function b_vdiff_1_op1 int: matrix
+ function b_vdiff_2_op1 int: matrix
+ function b_x1prev_op1 int: matrix
+ function b_xprev_op1 int: matrix
+
+  clone simulink2.Constant as B_A1 with function out1 = b_a1_op1
+
+  clone simulink2.Quadratic as B_A1tpa1 with function in1 = b_p_op1, function in2 = b_a1_op1, function out1 = b_a1tpa1_op1
+
+  clone simulink2.Sum_subtract as B_A1tpa1_p with function in1 = b_a1tpa1_op1, function in2 = b_p_op1, function out1 = b_a1tpa1_p_op1
+
+  clone simulink2.Constant as B_A2 with function out1 = b_a2_op1
+
+  clone simulink2.Quadratic as B_A2tpa2 with function in1 = b_p_op1, function in2 = b_a2_op1, function out1 = b_a2tpa2_op1
+
+  clone simulink2.Sum_subtract as B_A2tpa2_p with function in1 = b_a2tpa2_op1, function in2 = b_p_op1, function out1 = b_a2tpa2_p_op1
+
+ clone simulink2.Gain as B_Gain with function in1 = b_a1tpa1_p_op1, function out1 =  b_gain_op1
+  axiom g_B_Gain: B_Gain.s = -.1.000000
+
+ clone simulink2.Gain as B_Gain1 with function in1 = b_a2tpa2_p_op1, function out1 =  b_gain1_op1
+  axiom g_B_Gain1: B_Gain1.s = -.1.000000
+
+ clone simulink2.Is_equal_scalar as B_Is_equal with function in1 = b_vdiff_op1, function in2 = b_manualswitch1_op1, function out1 = b_is_equal_op1
+
+  clone simulink2.Is_pos_def_TorF as B_Is_pos_def with function in1 = b_gain_op1
+
+  clone simulink2.Is_pos_def_TorF as B_Is_pos_def1 with function in1 = b_p_op1
+
+  clone simulink2.Is_pos_def_TorF as B_Is_pos_def2 with function in1 = b_gain1_op1
+
+  clone simulink2.ManualSwitch as B_Manualswitch with function in1 = b_product_op1, function in2 = b_product1_op1, function out1 = b_manualswitch_op1
+
+  clone simulink2.ManualSwitch as B_Manualswitch1 with function in1 = b_vdiff_1_op1, function in2 = b_vdiff_2_op1, function out1 = b_manualswitch1_op1
+
+  clone simulink2.Constant as B_P with function out1 = b_p_op1
+
+  clone simulink2.Product as B_Product  with function in1 = b_a2_op1, function in2 = b_xprev_op1, function out1 = b_product_op1
+
+  clone simulink2.Product as B_Product1  with function in1 = b_a1_op1, function in2 = b_xprev_op1, function out1 = b_product1_op1
+
+  clone simulink2.Quadratic as B_V with function in1 = b_p_op1, function in2 = b_manualswitch_op1, function out1 = b_v_op1
+
+  clone simulink2.Delay as B_Vprev with function in1 = b_v_op1, function out1 = b_vprev_op1
+
+  clone simulink2.Sum_subtract as B_Vdiff with function in1 = b_v_op1, function in2 = b_vprev_op1, function out1 = b_vdiff_op1
+
+  clone simulink2.Quadratic as B_Vdiff_1 with function in1 = b_a1tpa1_p_op1, function in2 = b_x1prev_op1, function out1 = b_vdiff_1_op1
+
+  clone simulink2.Quadratic as B_Vdiff_2 with function in1 = b_a2tpa2_p_op1, function in2 = b_x1prev_op1, function out1 = b_vdiff_2_op1
+
+  clone simulink2.Delay as B_X1prev with function in1 = b_manualswitch_op1, function out1 = b_x1prev_op1
+
+  clone simulink2.Delay as B_Xprev with function in1 = b_manualswitch_op1, function out1 = b_xprev_op1
+
+ goal GG1b_r5_2_1 : forall k: int. b_is_equal_op1 k = True
+
+end
