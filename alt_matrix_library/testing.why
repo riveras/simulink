@@ -1,0 +1,8 @@
+theory SquareIsPos
+
+  use import real.Real
+  use import realsigns.RealSigns
+
+  lemma L1: forall x:real. x*x>=0.0
+
+end

@@ -1,0 +1,136 @@
+theory Matrix
+
+  type matrix
+
+end
+
+theory Size
+
+  use import Matrix
+  use import int.Int 
+
+  function nrows matrix : int
+  axiom pos_nrows: forall m:matrix. nrows m >= 1
+
+  function ncols matrix : int
+  axiom pos_ncols: forall m:matrix. ncols m >= 1
+
+end
+
+theory Elements
+
+  use import Matrix
+  use import Size
+  use import int.Int
+  use import real.RealInfix
+  use import bool.Bool
+
+  function elem matrix int int : real
+
+  function validIndex matrix int int : bool
+  axiom isValidIndex: forall m:matrix, i,j: int. validIndex m i j <-> (i >= 0) /\ (i <= nrows m) /\ (j >= 0) /\ (j <= ncols m)
+
+end
+
+theory Compare
+
+  use import Matrix
+  use import Size
+  use import Elements
+  use import int.Int
+  use import real.RealInfix
+  use import bool.Bool
+
+  function sameSize matrix matrix : bool
+  axiom matsSameSize: forall a,b: matrix. sameSize a b <-> (nrows a = nrows b) /\ (ncols a = ncols b)
+
+  function matsEq matrix matrix : bool
+
+  axiom matsEqual: forall a,b: matrix, i,j: int. (sameSize a b) -> (matsEq a b <-> ((validIndex a i j) -> (elem a i j = elem b i j)))
+
+  lemma eq1: forall a,b: matrix. (sameSize a b) -> (matsEq a b <-> matsEq b a)
+
+  lemma eq2: forall a,b,c: matrix. (sameSize a b) /\ (sameSize b c) -> sameSize a c
+
+end
+
+theory Vertcat
+
+  use import Matrix
+  use import Size
+  use import Elements
+  use import int.Int
+  use import real.RealInfix
+
+  function vertcat matrix matrix : matrix
+
+  axiom vc_rows: forall a, b: matrix. (ncols a = ncols b) -> nrows (vertcat a b) = nrows a + nrows b
+
+  axiom vc_cols: forall a, b: matrix. (ncols a = ncols b) -> ncols (vertcat a b) = ncols a
+
+  axiom vc_els_top: forall a, b: matrix, i, j: int. (ncols a = ncols b) -> ( (validIndex a i j) -> (elem (vertcat a b) i j = elem a i j ) )
+
+  axiom vc_els_btm: forall a, b: matrix, i, j: int. (ncols a = ncols b) -> ( (validIndex b i j) -> (elem (vertcat a b) (i + nrows a) j = elem b i j ) )
+
+end
+
+theory Horizcat
+
+  use import Matrix
+  use import Size
+  use import Elements
+  use import int.Int
+  use import real.RealInfix
+
+  function horizcat matrix matrix : matrix
+
+  axiom hc_rows: forall a, b: matrix. (nrows a = nrows b) -> nrows (horizcat a b) = nrows a
+
+  axiom hc_cols: forall a, b: matrix. (nrows a = nrows b) -> ncols (horizcat a b) = ncols a + ncols b
+
+  axiom hc_els_left: forall a, b: matrix, i, j: int. (nrows a = nrows b) -> ( (validIndex a i j) -> (elem (horizcat a b) i j = elem a i j ) )
+
+  axiom hc_els_right: forall a, b: matrix, i, j: int. (nrows a = nrows b) -> ( (validIndex b i j) -> (elem (horizcat a b) i (j+ncols a) = elem b i j ) )
+
+end
+
+theory Cat
+
+  use import Vertcat
+  use import Horizcat
+  use import Matrix
+  use import Size
+  use import Compare  
+  use import int.Int
+  use import real.RealInfix
+
+  lemma abcd: forall a,b,c,d: matrix. (nrows a = nrows b) /\ (ncols a = ncols c) /\ (nrows d = nrows c) /\ (ncols d = ncols b) -> matsEq (vertcat (horizcat a b) (horizcat c d)) (horizcat (vertcat a c) (vertcat b d))
+
+end
+
+theory Add
+
+  use import Matrix
+  use import Size
+  use import Elements
+  use import Compare
+  use import Horizcat
+  use import Vertcat
+  use import bool.Bool
+  use import real.RealInfix
+
+  function matAdd matrix matrix : matrix
+  axiom matAddRows: forall a,b: matrix. sameSize a b -> nrows (matAdd a b) = nrows a
+  axiom matAddCols: forall a,b: matrix. sameSize a b -> ncols (matAdd a b) = ncols a
+  axiom matAddElems: forall a,b: matrix, i,j: int. ((sameSize a b) /\ (validIndex a i j)) -> elem (matAdd a b) i j = elem a i j +. elem b i j
+
+  (* chuck in some lemmas to see if this is all working *)
+  lemma add1: forall a,b: matrix. (sameSize a b) -> matsEq (matAdd a b) (matAdd b a)
+  lemma add1a: forall a,b: matrix. (sameSize a b) -> sameSize (matAdd a b) a
+  lemma add1b: forall a,b: matrix. (sameSize a b) -> sameSize (matAdd a b) b
+  lemma add2i: forall x,y,z: real. x+.(y+.z) = (x+.y)+.z
+  lemma add2ii: forall a,b,c,d: matrix. ((sameSize a c) /\ (sameSize b d) /\ (nrows a = nrows b)) -> matsEq (matAdd (horizcat a b) (horizcat c d)) (horizcat (matAdd a c) (matAdd b d))
+  lemma add2iii: forall a,b,c,d: matrix. ((sameSize a c) /\ (sameSize b d) /\ (ncols a = ncols b)) -> matsEq (matAdd (vertcat a b) (vertcat c d)) (vertcat (matAdd a c) (matAdd b d))
+  lemma add2: forall a,b,c: matrix. (sameSize a b) /\ (sameSize b c) -> matsEq (matAdd a (matAdd b c)) (matAdd (matAdd a b) c)
+
+end

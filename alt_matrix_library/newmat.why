@@ -1,0 +1,149 @@
+theory Matdef
+
+  use import int.Int
+
+  type matrix = Materr | Scalar real | Hcat matrix matrix | Vcat matrix matrix
+
+  function nrows matrix : int
+  function ncols matrix : int
+  function row matrix int : matrix
+  function col matrix int : matrix
+  function elem matrix int int : real
+
+  axiom Materr_emptydef_1: forall m: matrix. nrows m = 0 <-> m = Materr
+  axiom Materr_emptydef_2: forall m: matrix. ncols m = 0 <-> m = Materr
+
+  lemma test_Materr_1: Materr = Materr
+  lemma test_Materr_2: not Materr <> Materr
+
+  lemma err_no_rows: nrows Materr = 0
+  lemma err_no_cols: ncols Materr = 0
+  lemma no_cols_no_rows: forall m: matrix. ncols m = 0 <-> nrows m = 0
+
+  axiom row_err_lo: forall a: matrix, i: int. i<1 -> row a i = Materr
+  axiom row_err_hi: forall a: matrix, i: int. i>nrows a -> row a i = Materr
+
+  axiom col_err_lo: forall a: matrix, i: int. i<1 -> col a i = Materr
+  axiom col_err_hi: forall a: matrix, i: int. i>ncols a -> col a i = Materr
+
+  lemma err_row: forall i: int. row Materr i = Materr
+  lemma err_col: forall i: int. col Materr i = Materr
+
+  axiom sclr_one_row: forall x: real. nrows (Scalar x) = 1
+  axiom sclr_one_col: forall x: real. ncols (Scalar x) = 1
+  axiom sclr_row: forall x: real. row (Scalar x) 1 = Scalar x
+  axiom sclr_col: forall x: real. col (Scalar x) 1 = Scalar x
+
+  lemma sclr_not_err: forall x: real. Scalar x <> Materr
+
+  axiom vcat_w_err1: forall a: matrix. Vcat a Materr = Materr
+  axiom vcat_w_err2: forall a: matrix. Vcat Materr a = Materr
+  axiom vcat_err: forall a,b: matrix. (ncols a <> ncols b) -> Vcat a b = Materr 
+  axiom vcat_nrows: forall a,b: matrix. (ncols a = ncols b) -> nrows (Vcat a b) = nrows a + nrows b
+  axiom vcat_ncols: forall a,b: matrix. (ncols a = ncols b) -> ncols (Vcat a b) = ncols a
+  axiom vcat_col: forall a,b: matrix, i: int. (ncols a = ncols b) -> col (Vcat a b) i = Vcat (col a i) (col b i)
+  axiom vcat_row_top: forall a,b: matrix, i: int. ((ncols a = ncols b) /\ (i <= nrows a)) -> row (Vcat a b) i = row a i
+  axiom vcat_row_btm: forall a,b: matrix, i: int. ((ncols a = ncols b) /\ (i> nrows a)) -> row (Vcat a b) i = row b (i-nrows a)
+
+  axiom hcat_w_err1: forall a: matrix. Hcat a Materr = Materr
+  axiom hcat_w_err2: forall a: matrix. Hcat Materr a = Materr
+  axiom hcat_err: forall a,b: matrix. (nrows a <> nrows b) -> Hcat a b = Materr
+  axiom hcat_nrows: forall a,b: matrix. (nrows a = nrows b) -> nrows (Hcat a b) = nrows a
+  axiom hcat_ncols: forall a,b: matrix. (nrows a = nrows b) -> ncols (Hcat a b) = ncols a + ncols b
+  axiom hcat_row: forall a,b: matrix, i: int. (nrows a = nrows b) -> row (Hcat a b) i = Hcat (row a i) (row b i)
+  axiom hcat_col_left: forall a,b: matrix, i: int. ((nrows a = nrows b) /\ (i <= ncols a)) -> col (Hcat a b) i = col a i
+  axiom hcat_col_right: forall a,b: matrix, i: int. ((nrows a = nrows b) /\ (i > ncols a)) -> col (Hcat a b) i = col b (i - ncols a)
+
+  lemma access_order: forall m: matrix, i,j: int. col (row m i) j = row (col m j) i
+
+  lemma vcat_order: forall a,b,c: matrix. Vcat (Vcat a b) c = Vcat a (Vcat b c)
+  lemma hcat_order: forall a,b,c: matrix. Hcat (Hcat a b) c = Hcat a (Hcat b c)
+  lemma cat_order: forall a,b,c,d: matrix. Vcat (Hcat a b) (Hcat c d) = Hcat (Vcat a c) (Vcat b d)
+
+  axiom elem_scl_def: forall x: real. elem (Scalar x) 1 1 = x
+  axiom element_def: forall m: matrix, i,j: int. ((i>=1) /\ (i<=nrows m) /\ (j>=1) /\ (j<=ncols m)) -> elem m i j = elem (col (row m i) j) 1 1
+
+  lemma rows_pos: forall m: matrix. nrows m >= 0
+  lemma cols_pos: forall m: matrix. ncols m >= 0
+
+end
+
+theory Matdeftest
+
+  use import Matdef
+
+  goal test_vcat_row1a: forall x,y: real. row (Vcat (Scalar x) (Scalar y)) 1 = (Scalar x)
+  goal test_vcat_row2a: forall x,y: real. row (Vcat (Scalar x) (Scalar y)) 2 = (Scalar y)
+  goal test_vcat_row1c: forall x,y: real. row (Vcat (Scalar x) (Scalar y)) 1 <> Materr
+  goal test_vcat_row2d: forall x,y: real. row (Vcat (Scalar x) (Scalar y)) 2 <> Materr
+  (* goal test_vcat_row1e_SHOULDFAIL: forall x,y: real. row (Vcat (Scalar x) (Scalar y)) 1 = Materr *)
+  (* goal test_vcat_row2f_SHOULDFAIL: forall x,y: real. row (Vcat (Scalar x) (Scalar y)) 2 = Materr *)
+
+  goal test_vcat_nrows: forall x,y,z: real. nrows (Vcat (Vcat (Scalar x) (Scalar y)) (Scalar z) ) = 3
+  goal test_vcat_row1: forall x,y,z: real. row (Vcat (Vcat (Scalar x) (Scalar y)) (Scalar z)) 1 = (Scalar x)
+  goal test_vcat_row2: forall x,y,z: real. row (Vcat (Vcat (Scalar x) (Scalar y)) (Scalar z)) 2 = (Scalar y)
+  goal test_vcat_row3: forall x,y,z: real. row (Vcat (Vcat (Scalar x) (Scalar y)) (Scalar z)) 3 = (Scalar z)
+  goal test_vcat_col: forall x,y: real. col (Vcat (Scalar x) (Scalar y)) 1 = Vcat (Scalar x) (Scalar y)
+
+  goal test_cat_r1: forall a,b,c,d: real. row (Vcat (Hcat (Scalar a) (Scalar b)) (Hcat (Scalar c) (Scalar d))) 1 = Hcat (Scalar a) (Scalar b)
+  goal test_cat_r2: forall a,b,c,d: real. row (Vcat (Hcat (Scalar a) (Scalar b)) (Hcat (Scalar c) (Scalar d))) 2 = Hcat (Scalar c) (Scalar d)
+  goal test_cat_c1: forall a,b,c,d: real. col (Vcat (Hcat (Scalar a) (Scalar b)) (Hcat (Scalar c) (Scalar d))) 1 = Vcat (Scalar a) (Scalar c)
+  goal test_cat_c2: forall a,b,c,d: real. col (Vcat (Hcat (Scalar a) (Scalar b)) (Hcat (Scalar c) (Scalar d))) 2 = Vcat (Scalar b) (Scalar d)
+  goal test_cat_c2a: forall a,b,c,d: real. col (Vcat (Hcat (Scalar a) (Scalar b)) (Hcat (Scalar c) (Scalar d))) 3 = Materr
+  goal test_cat_c2b: forall a,b,c,d: real. col (Vcat (Hcat (Scalar a) (Scalar b)) (Hcat (Scalar c) (Scalar d))) 2 <> Materr
+  (* goal test_cat_c2c: forall b,d: real. Vcat (Scalar b) (Scalar d) = Materr *)
+  goal test_cat_c2d: forall b,d: real. Vcat (Scalar b) (Scalar d) <> Materr
+
+  goal test_elem_11: forall a,b,c,d: real. elem (Vcat (Hcat (Scalar a) (Scalar b)) (Hcat (Scalar c) (Scalar d))) 1 1 = a
+  goal test_elem_12: forall a,b,c,d: real. elem (Vcat (Hcat (Scalar a) (Scalar b)) (Hcat (Scalar c) (Scalar d))) 1 2 = b
+  goal test_elem_21: forall a,b,c,d: real. elem (Vcat (Hcat (Scalar a) (Scalar b)) (Hcat (Scalar c) (Scalar d))) 2 1 = c
+  goal test_elem_22: forall a,b,c,d: real. elem (Vcat (Hcat (Scalar a) (Scalar b)) (Hcat (Scalar c) (Scalar d))) 2 2 = d
+
+end
+
+theory Matadd
+
+  use import Matdef
+  use import real.RealInfix
+
+  function matAdd matrix matrix : matrix
+  axiom mat_add_err_1: forall a: matrix. matAdd a Materr = Materr
+  axiom mat_add_err_2: forall a: matrix. matAdd Materr a = Materr
+  axiom mat_add_badsize: forall a b: matrix. ((nrows a <> nrows b) \/ (ncols a <> ncols b)) -> matAdd a b = Materr
+  axiom mat_add_sclr: forall x,y: real. matAdd (Scalar x) (Scalar y) = Scalar (x+.y)
+
+  axiom mat_add_row: forall x,y: real, a,b: matrix, ia,ib: int. matAdd (Hcat (Scalar x) (row a ia)) (Hcat (Scalar y) (row b ib)) = Hcat (Scalar (x+.y)) (matAdd (row a ia) (row b ib))
+
+  lemma mat_trans: forall a,b: matrix. matAdd a b = matAdd b a
+
+(*  lemma mat_rows: forall a,b: matrix, i: int. row (matAdd a b) i = matAdd (row a i) (row b i)
+
+  lemma mat_vcat: forall a,b,c,d: matrix. (nrows a = nrows c) -> matAdd (Vcat a b) (Vcat c d) = Vcat (matAdd a c) (matAdd b d)
+
+  function zeroMat int int : matrix
+  axiom add_zero: forall a: matrix. matAdd a (zeroMat (nrows a) (ncols a)) = a
+
+  function negMat matrix : matrix
+  axiom add_neg: forall a: matrix. matAdd a (negMat a) = zeroMat (nrows a) (ncols a)
+  axiom err_neg: negMat Materr = Materr
+  lemma neg_same_size: forall a: matrix. nrows a = nrows (negMat a)
+
+*)
+
+end
+
+theory Mataddtest
+
+  use import Matdef
+  use import Matadd
+  use import real.RealInfix
+
+  goal test_add: forall a,b,c,d: real. matAdd (Vcat (Scalar a) (Scalar b)) (Vcat (Scalar c) (Scalar d)) = Vcat (Scalar (a+.c)) (Scalar (b+.d))
+
+    (* testing as not all cases of mat_rows should word *)
+  goal test_mrow_1: forall x,y,z: real. row (matAdd (Vcat (Scalar x) (Scalar y)) (Scalar z)) 1 = Materr
+  goal test_mrow_2: forall x,y,z: real. matAdd (row (Vcat (Scalar x) (Scalar y))  1) (row (Scalar z) 1) <> Materr
+  goal test_mrow_3: forall x,y,z: real. matAdd (row (Vcat (Scalar x) (Scalar y))  1) (row (Scalar z) 1) = Materr
+
+
+end

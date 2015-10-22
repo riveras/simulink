@@ -1,0 +1,8 @@
+theory RealSigns
+
+  use import real.Real
+
+  lemma L1: forall x,y:real. (x >= 0.0)/\(y >= 0.0) -> (x*y >= 0.0)
+  lemma L2: forall x,y:real. (x <= 0.0)/\(y <= 0.0) -> (x*y >= 0.0)
+
+end
