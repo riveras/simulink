@@ -116,12 +116,17 @@ theory Matrix
   axiom matmult2: forall a b c d : matrix. (d = mat_mult (mat_add a b) c) <-> (d = mat_add (mat_mult a c) (mat_mult b c))
   (* left distributive a.(b+c) = a.b + a.c *)
   axiom matmult3: forall a b c d : matrix. (d = mat_mult a (mat_add b c)) <-> (d = mat_add (mat_mult a b) (mat_mult a c))
+  (* check general cases with lemmas *)
+  lemma mat_mult_chk1: forall a b c : matrix. mat_mult a (mat_mult b c) = mat_mult (mat_mult a b) c
+  lemma mat_mult_chk2: forall a b c : matrix. mat_mult a (mat_add b c) = mat_add (mat_mult a b) (mat_mult a c)
+  lemma mat_mult_chk3: forall a b c : matrix. mat_mult (mat_add a b) c = mat_add (mat_mult a c) (mat_mult b c)
+  
 
   (* multiplying by zero should give zero *)
   lemma mat_mult_zero1: forall a b c d : matrix. (d = mat_mult a (mat_add b c)) /\ (mat_is_zero c) -> (d = mat_mult a b)
   lemma mat_mult_zero2: forall a b c : matrix. (mat_add a (mat_mult b c) = a) <-> (mat_is_zero (mat_mult b c))
   lemma mat_mult_zero3: forall a b c : matrix. (mat_mult a (mat_add b c) = mat_mult a b) -> mat_is_zero (mat_mult a c)
-  lemma mat_mult_zero: forall a b c : matrix. (c = mat_mult a b) /\ (mat_is_zero b) -> (mat_is_zero c)
+  lemma mat_postmult_zero2: forall a b : matrix. (mat_is_zero b) -> mat_is_zero (mat_mult a b) 
 
   (* some lemmas for sanity checking *)
   (* a.(b-c) = a.b - a.c *)
