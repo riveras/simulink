@@ -25,7 +25,7 @@ theory Matrix
   (* sanity check: if c=b-a and d=a+c then d=b *)
   lemma mat_sub_chk2: forall a b c d : matrix. (c = mat_subtract b a) /\ (d = mat_add a c) -> d=b
   (* (a-b)-c = a-(b+c) *)
-  lemma mat_sub_chk3: forall a b c x y : matrix. (x = mat_subtract (mat_subtract a b) c) /\ (y = mat_subtract a (mat_add b c)) -> x=y
+  lemma mat_sub_chk3: forall a b c x y : matrix. (x = mat_subtract (mat_subtract a b) c) /\ (y = mat_subtract a (mat_add b c)) -> x = y
   (* check associativity of subtract (a-b)-c = (a-c)-b *)
   (* lemma mat_assoc: forall a b c d e x y : matrix. (d = mat_subtract a b) /\ (x = mat_subtract d c) /\ (e = mat_subtract a c) /\ (y = mat_subtract e b) -> x=y *)
 

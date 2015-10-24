@@ -137,22 +137,6 @@ theory MyModel
   end
 
 
-(* Subsystem input port connections: feedbackexample/Compare
-To Zero *)
-
-  axiom inport_conn_s_Compare_To_Zero_1: forall k : int. s_Compare_To_Zero_In1_out1 = s_Vdiff_out1
-
-(* Subsystem input port connections: feedbackexample/CompareFloat *)
-
-  axiom inport_conn_s_CompareFloat_1: forall k : int. s_CompareFloat_In1_out1 = s_Vdiff_out1
-
-  axiom inport_conn_s_CompareFloat_2: forall k : int. s_CompareFloat_In2_out1 = s_vdiff_an_out1
-
-(* Subsystem input port connections: feedbackexample/CompareFloat/Compare
-To Constant2 *)
-
-  axiom inport_conn_s_CompareFloat_Compare_To_Constant2_1: forall k : int. s_CompareFloat_Compare_To_Constant2_In1_out1 = s_CompareFloat_Abs_out1
-
   namespace import N_s_CompareFloat_Subtract
     clone export simulink.AddBlock with function in1 = s_CompareFloat_In1_out1, function in2 = s_CompareFloat_In2_out1, function out1 = s_CompareFloat_Subtract_out1
   end
@@ -178,24 +162,6 @@ To Constant2 *)
   end
 
 
-(* Subsystem input port connections: feedbackexample/IgnoreFirstStep *)
-
-  axiom inport_conn_s_IgnoreFirstStep_1: forall k : int. s_IgnoreFirstStep_In1_out1 = s_Compare_To_Zero_out1
-
-(* Subsystem input port connections: feedbackexample/IgnoreFirstStep/Compare
-To Constant *)
-
-  axiom inport_conn_s_IgnoreFirstStep_Compare_To_Constant_1: forall k : int. s_IgnoreFirstStep_Compare_To_Constant_In1_out1 = s_IgnoreFirstStep_Clock_out1
-
-(* Subsystem input port connections: feedbackexample/IgnoreFirstStep1 *)
-
-  axiom inport_conn_s_IgnoreFirstStep1_1: forall k : int. s_IgnoreFirstStep1_In1_out1 = s_CompareFloat_out1
-
-(* Subsystem input port connections: feedbackexample/IgnoreFirstStep1/Compare
-To Constant *)
-
-  axiom inport_conn_s_IgnoreFirstStep1_Compare_To_Constant_1: forall k : int. s_IgnoreFirstStep1_Compare_To_Constant_In1_out1 = s_IgnoreFirstStep1_Clock_out1
-
   namespace import N_s_P
     clone export simulink.ConstantBlock with function out1 = s_P_out1
   end
@@ -220,24 +186,6 @@ To Constant *)
     clone export simulink.SubtractBlock with function in1 = s_atpa_out1, function in2 = s_P_out1, function out1 = s_atpaminusp_out1
   end
 
-
-(* Subsystem input port connections: feedbackexample/isPosDef *)
-
-  axiom inport_conn_s_isPosDef_1: forall k : int. s_isPosDef_In1_out1 = s_Gain_out1
-
-(* Subsystem input port connections: feedbackexample/isPosDef/Compare
-To Zero1 *)
-
-  axiom inport_conn_s_isPosDef_Compare_To_Zero1_1: forall k : int. s_isPosDef_Compare_To_Zero1_In1_out1 = s_isPosDef_MinMax2_out1
-
-(* Subsystem input port connections: feedbackexample/isPosDef1 *)
-
-  axiom inport_conn_s_isPosDef1_1: forall k : int. s_isPosDef1_In1_out1 = s_P_out1
-
-(* Subsystem input port connections: feedbackexample/isPosDef1/Compare
-To Zero1 *)
-
-  axiom inport_conn_s_isPosDef1_Compare_To_Zero1_1: forall k : int. s_isPosDef1_Compare_To_Zero1_In1_out1 = s_isPosDef1_MinMax2_out1
 
   namespace import N_s_v
     clone export simulink.QuadraticBlock with function in1 = s_P_out1, function in2 = s_x_out1, function out1 = s_v_out1

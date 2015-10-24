@@ -1,0 +1,108 @@
+theory Matrix
+
+  type matrix
+
+  (* note size compatibility assumed throughout - must be checked numerically *)  
+
+  (* matrix addition *)
+  function matadd matrix matrix : matrix
+  axiom matadd1: forall a b : matrix. (matadd a b) = (matadd b a)
+  axiom matadd2: forall a b c : matrix. matadd a (matadd b c) = matadd (matadd a b) c
+
+  (* matrix multiplication *)
+  function matmult matrix matrix : matrix
+  axiom matmult1: forall a b c : matrix. matmult a (matadd b c) = matadd (matmult a b) (matmult a c)
+  axiom matmult2: forall a b c : matrix. matmult (matadd a b) c = matadd (matmult a c) (matmult b c)
+  axiom matmult3: forall a b c : matrix. matmult a (matmult b c) = matmult (matmult a b) c
+
+  (* matrix transpose *)
+  function mattrans matrix : matrix
+  axiom mattrans1: forall a b : matrix. mattrans (matmult a b) = matmult (mattrans b) (mattrans a)
+  lemma transchk: forall a b c : matrix. matmult (mattrans a) (matmult b c) = matmult (matmult (mattrans a) b) c
+
+  (* matrix subtraction *)
+  function matsub matrix matrix : matrix
+  axiom matsub1: forall a b : matrix. matadd a (matsub b a) = b
+  lemma matsub2: forall a b c : matrix. matadd a (matsub b c) = matadd (matsub a c) b
+  lemma matsub3: forall a b c : matrix. matsub a (matadd b c) = matsub (matsub a b) c
+  lemma matsub4: forall a b c : matrix. matmult a (matsub b c) = matsub (matmult a b) (matmult a c)
+
+  (* quadratic forms *)
+  function matquad matrix matrix : matrix
+  axiom matquad1: forall p x : matrix. matquad p x = matmult (mattrans x) (matmult p x)
+  lemma quadchk: forall p a x : matrix. matquad p (matmult a x) = matquad (matquad p a) x
+  lemma quadsub: forall p q x : matrix. matquad (matsub p q) x = matsub (matquad p x) (matquad q x)
+
+end  
+
+theory BigModel
+
+  use import int.Int
+  use import Matrix
+
+  function a int : matrix
+  function b int : matrix
+  function f int : matrix
+  function x int : matrix
+  function xnext int : matrix
+  function ax int : matrix
+  function u int : matrix
+  function bu int : matrix
+  function aplusbf int : matrix
+  function bf int : matrix
+  function v int : matrix
+  function p int : matrix
+  function atpa int : matrix
+  function vprev int : matrix
+
+  axiom xnext_def: forall k : int. xnext k = matadd (ax k) (bu k)
+  (* error in sign of feedback *)
+(*  axiom xnext_def: forall k : int. xnext k = matsub (ax k) (bu k) *)
+  axiom ax_def: forall k : int. ax k = matmult (a k) (x k)
+  axiom bu_def: forall k : int. bu k = matmult (b k) (u k)
+  axiom u_def: forall k : int. u k = matmult (f k) (x k)
+
+  axiom bf_def: forall k : int. bf k = matmult (b k) (f k)
+  axiom aplusbf_def: forall k : int. aplusbf k = matadd (a k) (bf k)
+
+  (* lemma clsys: forall k : int. xnext k = matmult (aplusbf k) (x k) *)
+
+  axiom x_def: forall k : int. x k = xnext (k-1)
+
+  (* lemma clsys2: forall k : int. x (k+1) = matmult (aplusbf k) (x k) *)
+
+  axiom v_def: forall k : int. v k = matquad (p k) (x k)
+
+  axiom p_const: forall k : int. p k = p (k+1)
+
+  axiom a_const: forall k : int. a k = a (k+1)
+
+  axiom b_const: forall k : int. b k = b (k+1)
+
+  axiom f_const: forall k : int. f k = f (k+1)
+
+  axiom atpa_def: forall k : int. atpa k = matquad (p k) (aplusbf k)
+
+  (* lemma vchk: forall k: int. v (k+1) = matquad (atpa k) (x k) *)
+
+  axiom vprev_def: forall k : int. vprev k = v (k-1)
+
+  function vdiff int : matrix
+  axiom vdiff_def: forall k : int. vdiff k = matsub (v k) (vprev k)
+  (* duff model translation - error in sign of Vdiff *)
+(*  axiom vdiff_def: forall k : int. vdiff k = matsub (vprev k) (v k) *)
+
+  function xprev int : matrix
+  axiom xprev_def: forall k : int. xprev k = x (k-1)
+
+  function atpaminusp int : matrix
+  axiom atpaminusp_def: forall k : int. atpaminusp k = matsub (atpa k) (p k)
+  (* potential sign error *)
+(*  axiom atpaminusp_def: forall k : int. atpaminusp k = matsub (p k) (atpa k) *)
+
+  function vdiff_an int: matrix
+  axiom vdiff_an_def: forall k : int. vdiff_an k = matquad (atpaminusp k) (xprev k)
+
+  goal GG: forall k : int. vdiff k = vdiff_an k
+
+end

@@ -103,12 +103,6 @@ for ii=1:numel(blkList),
                     
                 case 'SubSystem'
                     
-                    thyList = [thyList sprintf('(* Subsystem input port connections: %s *)', thisBlkName)];
-                    % just pass through the inputs to the inports inside
-                    for jj=1:numel(inList),
-                        theory = sprintf('  axiom inport_conn_%s_%i: forall k : int. %s_In%i_out1 = %s', shortName, jj, shortName, jj, inList{jj});
-                        thyList = [thyList theory];
-                    end
                     
                     
                 otherwise
@@ -117,7 +111,7 @@ for ii=1:numel(blkList),
                     
             end
             
-    end
+    end        
     
     % print some info
     if ~isempty(theoryName),
