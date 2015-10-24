@@ -19,13 +19,42 @@ theory Matrix
 
   (* matrix subtraction *)
   function mat_subtract matrix matrix : matrix
-  (* iff c = a+b then a = c-b *)
+  (* iff c=a+b then a=c-b *)
   axiom mat_subtract1: forall a b c : matrix. (c = mat_add a b) <-> (a = mat_subtract c b)
+  
+  (* and define the minus in terms of subtraction *)
+  function mat_minus matrix : matrix
+  (* define equivalence: iff c=a-b then c=a+(-b) *)
+  axiom mat_minus_def: forall a b c : matrix. (c = mat_subtract a b) <-> (c = mat_add a (mat_minus b))
+  (* try and give it a unique definition iff c = a+b then b = c+(-a) *)
+  lemma mat_minus_add: forall a b c : matrix. (c = mat_add a b) <-> (b = mat_add c (mat_minus a))
+
+  (* and in another form *)
+  lemma mat_minus_rev: forall a b : matrix. (a = mat_minus b) <-> (b = mat_minus a)
+  (* check that a+b+(-b) = a *)
+  lemma mat_minus_chk: forall a b c : matrix. (c = mat_add a (mat_add b (mat_minus b))) -> (c=a)
+  (* lemma of uniqueness of minus? *)
+  lemma mat_minus_unq: forall a b : matrix. (a=b) <-> (mat_minus a = mat_minus b)
+  (* lets see if it gets -(-a) = a *)
+  lemma mat_minus_twice: forall a : matrix. mat_minus (mat_minus a) = a
+
+  (* verify swapping terms in add *)
+  lemma mat_sub_chk0: forall a b c : matrix. (c = mat_add b a) <-> (b = mat_subtract c a)
+  (* and verify subtract works the other way round c=a+b then b=c-a *)
   lemma mat_sub_chk1: forall a b c : matrix. (c = mat_add a b) <-> (b = mat_subtract c a)
-  (* sanity check: if c=b-a and d=a+c then d=b *)
-  lemma mat_sub_chk2: forall a b c d : matrix. (c = mat_subtract b a) /\ (d = mat_add a c) -> d=b
-  (* (a-b)-c = a-(b+c) *)
-  lemma mat_sub_chk3: forall a b c x y : matrix. (x = mat_subtract (mat_subtract a b) c) /\ (y = mat_subtract a (mat_add b c)) -> x=y
+  (* verify subtraction undoes addition (a + b) - b = a *)
+  lemma mat_sub_undo1: forall a b c : matrix. (c = mat_subtract (mat_add a b) b) -> (c=a)
+  (* and also (a-b)+b = a *)
+  lemma mat_sub_undo2: forall a b c : matrix. (c = mat_add (mat_subtract a b) b) -> (c=a)
+
+  (* a+(b-c) = (a+b)-c *)
+  lemma mat_sub_assoc0: forall a b c d : matrix. (d = mat_add a (mat_add b (c))) <-> (d = mat_add (mat_add a b) (c))
+  lemma mat_sub_assoc2: forall a b c d : matrix. (d = mat_add a (mat_add b (mat_minus c))) -> (d = mat_add (mat_add a b) (mat_minus c))
+  (* lemma mat_sub_assoc: forall a b c d : matrix. (d = mat_add a (mat_subtract b c)) <-> (d = mat_subtract (mat_add a b) c) *)
+
+  (* (a-b)+c = a+(c-b) *)
+  (* lemma mat_sub_chk3: forall a b c x y : matrix. (x = mat_add (mat_subtract a b) c) /\ (y = mat_add a (mat_subtract c b)) -> x=y *)
+  (* lemma mat_sub_chk3: forall a b c x y : matrix. (x = mat_subtract (mat_subtract a b) c) /\ (y = mat_subtract a (mat_add b c)) -> x=y *)
   (* check associativity of subtract (a-b)-c = (a-c)-b *)
   (* lemma mat_assoc: forall a b c d e x y : matrix. (d = mat_subtract a b) /\ (x = mat_subtract d c) /\ (e = mat_subtract a c) /\ (y = mat_subtract e b) -> x=y *)
 
