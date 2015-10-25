@@ -6,20 +6,26 @@ theory Matrix
 
   (* note size compatibility assumed throughout - must be checked numerically *)  
 
+end
+
   (* start with basic ring axioms *)
   (* see https://en.wikipedia.org/wiki/Ring_(mathematics) *)
   (* properties defined as implications to avoid need for sizing *)
 
-  (* ----- ADDITION ----- *)
+theory MatrixAdd
+
+  use import Matrix
 
   (* matrix addition *)
   function mat_add matrix matrix : matrix
   (* add is commutative: if c = a+b then c = b+a *)
   axiom mat_add_comm: forall a b c : matrix. (c = mat_add a b) -> (c = mat_add b a)
-  lemma mat_add_comm2: forall a b c : matrix. (c = mat_add b a) -> (c = mat_add a b)
-  lemma mat_add_comm3: forall a b : matrix. mat_add a b = mat_add b a
+
   (* add is associative iff d = a+(b+c) then d = (a+b)+c *)
   axiom mat_add_assoc: forall a b c : matrix. mat_add a (mat_add b c) = mat_add (mat_add a b) c
+
+  lemma mat_add_comm3: forall a b : matrix. mat_add a b = mat_add b a
+  lemma mat_add_comm2: forall a b c : matrix. (c = mat_add b a) -> (c = mat_add a b)
   lemma mat_add_assoc2: forall a b c x y : matrix. (x = mat_add a (mat_add b c)) /\ (y = mat_add (mat_add a b) c) -> (y=x)
 
   (* fun with permutations *)
@@ -31,12 +37,23 @@ theory Matrix
   (* lemma mat_add_play6: forall a b c d : matrix. (mat_add (mat_add a b) (mat_add c d)) = mat_add (mat_add (mat_add a b) c) d *)
   (* lemma mat_add_play7: forall a b c d : matrix. (mat_add (mat_add a b) (mat_add c d)) = (mat_add (mat_add a d) (mat_add c b)) *)
   
-  (* ----- ZERO ----- *)
+end
+
+theory MatrixZero
+
+  use import Matrix
+  use import MatrixAdd
 
   (* concept of a zero matrix *)
   predicate mat_is_zero matrix
   (* defined that if a+b=c and a=c then b=0 *)
   axiom mat_zero_def1: forall a b : matrix. ((mat_add a b) = a) <-> (mat_is_zero b)
+
+  (* note - all zero matrices are not identical, as they may be different sizes *)
+  (* so, zero-ness is defined as a predicate *)
+  (* departure here from basic ring properties, which require unique zero ? *)
+
+  lemma mat_zero_comm: forall a b : matrix. ((mat_add a b) = b) <-> (mat_is_zero a)
   (* and that if a+b=c and b=0 then a=c *)
   lemma mat_zero_def2: forall a b c : matrix. ((c = mat_add a b) /\ (mat_is_zero b)) -> (c = a)
   (* check the permutations *)
@@ -45,10 +62,43 @@ theory Matrix
   lemma mat_zero_chk1: forall a b c : matrix. ((c = mat_add a b) /\ (c = b)) -> (mat_is_zero a)
   lemma mat_zero_chk2: forall a b c : matrix. ((c = mat_add a b) /\ (mat_is_zero a)) -> (c = b)
 
+end
+
+theory MatrixMultiply
+
+  use import Matrix
+  use import MatrixAdd
+
+  (* matrix multiplication *)
+  function mat_mult matrix matrix : matrix
+  (* mult is monoid a.(b.c) = (a.b).c *)
+  axiom matmult1: forall a b c d : matrix. (d = mat_mult a (mat_mult b c)) <-> (d = mat_mult (mat_mult a b) c)
+  (* right distributive (a+b).c = a.c + b.c *)
+  axiom matmult2a: forall a b c x y : matrix. ((x = mat_mult (mat_add a b) c) /\ (y = mat_add (mat_mult a c) (mat_mult b c))) -> (x=y)
+  axiom matmult2b: forall a b c d : matrix. (d = mat_add (mat_mult a c) (mat_mult b c)) -> (d = mat_mult (mat_add a b) c)
+  (* left distributive a.(b+c) = a.b + a.c *)
+  axiom matmult3a: forall a b c d : matrix. (d = mat_mult a (mat_add b c)) -> (d = mat_add (mat_mult a b) (mat_mult a c))
+  axiom matmult3b: forall a b c d : matrix. (d = mat_add (mat_mult a b) (mat_mult a c)) -> (d = mat_mult a (mat_add b c))
+
+  (* check general cases with lemmas *)
+  (* THESE THREE WON'T PROVE *)
+  (* lemma mat_mult_chk1: forall a b c : matrix. mat_mult a (mat_mult b c) = mat_mult (mat_mult a b) c *)
+  (* lemma mat_mult_chk2: forall a b c : matrix. mat_mult a (mat_add b c) = mat_add (mat_mult a b) (mat_mult a c) *)
+  (* lemma mat_mult_chk3: forall a b c : matrix. mat_mult (mat_add a b) c = mat_add (mat_mult a c) (mat_mult b c) *)
+  
+end
+
+theory MatrixMinus
+
+  use import Matrix
+  use import MatrixAdd
+  use import MatrixZero
+
   (* additive inverse - minus! *)
   function mat_minus matrix : matrix
   (* define equivalence: a+(-a) = 0 *)
   axiom mat_minus_def: forall a : matrix. mat_is_zero (mat_add a (mat_minus a))
+
   (* other way round (-a)+a = 0 *)
   lemma mat_minus_def2: forall a : matrix. mat_is_zero (mat_add (mat_minus a) a)
   (* b+a+(-a) = b *)
@@ -58,16 +108,6 @@ theory Matrix
   lemma mat_minus_add1: forall a b c : matrix. (c = mat_add a b) -> (b = mat_add c (mat_minus a)) 
   lemma mat_minus_add2: forall a b c : matrix. (b = mat_add c (mat_minus a)) -> (c = mat_add a b)
 
-  (* ----- SUBTRACTION ----- *)
-
-  (* matrix subtraction *)
-  function mat_subtract matrix matrix : matrix
-  (* define subtract as addition of minus *)
-  axiom mat_subtract_def: forall a b : matrix. mat_subtract a b = mat_add a (mat_minus b)
-  (* iff c=a+b then a=c-b *)
-  lemma mat_subtract1: forall a b c : matrix. (c = mat_add a b) -> (a = mat_subtract c b)
-  lemma mat_subtract2: forall a b c : matrix. (a = mat_subtract c b) -> (c = mat_add a b)
-  
   (* and in another form *)
   lemma mat_minus_rev: forall a b : matrix. (a = mat_minus b) <-> (b = mat_minus a)
   (* check that a+b+(-b) = a *)
@@ -77,6 +117,26 @@ theory Matrix
   (* lets see if it gets -(-a) = a *)
   lemma mat_minus_twice: forall a : matrix. mat_minus (mat_minus a) = a
 
+end
+
+theory MatrixSubtract
+
+  use import Matrix
+  use import MatrixAdd
+  use import MatrixZero
+  use import MatrixMinus
+
+  (* ----- SUBTRACTION ----- *)
+
+  (* matrix subtraction *)
+  function mat_subtract matrix matrix : matrix
+  (* define subtract as addition of minus *)
+  axiom mat_subtract_def: forall a b : matrix. mat_subtract a b = mat_add a (mat_minus b)
+
+  (* iff c=a+b then a=c-b *)
+  lemma mat_subtract1: forall a b c : matrix. (c = mat_add a b) -> (a = mat_subtract c b)
+  lemma mat_subtract2: forall a b c : matrix. (a = mat_subtract c b) -> (c = mat_add a b)
+  
   (* verify swapping terms in add *)
   lemma mat_sub_chk0: forall a b c : matrix. (c = mat_add b a) <-> (b = mat_subtract c a)
   (* and verify subtract works the other way round c=a+b then b=c-a *)
@@ -106,32 +166,32 @@ theory Matrix
   (* check associativity of subtract (a-b)-c = (a-c)-b *)
   lemma mat_assoc: forall a b c d e x y : matrix. (d = mat_subtract a b) /\ (x = mat_subtract d c) /\ (e = mat_subtract a c) /\ (y = mat_subtract e b) -> x=y
 
-  (* ----- MULTIPLICATION ----- *)
+end
 
-  (* matrix multiplication *)
-  function mat_mult matrix matrix : matrix
-  (* mult is monoid a.(b.c) = (a.b).c *)
-  axiom matmult1: forall a b c d : matrix. (d = mat_mult a (mat_mult b c)) <-> (d = mat_mult (mat_mult a b) c)
-  (* right distributive (a+b).c = a.c + b.c *)
-  axiom matmult2: forall a b c d : matrix. (d = mat_mult (mat_add a b) c) <-> (d = mat_add (mat_mult a c) (mat_mult b c))
-  (* left distributive a.(b+c) = a.b + a.c *)
-  axiom matmult3: forall a b c d : matrix. (d = mat_mult a (mat_add b c)) <-> (d = mat_add (mat_mult a b) (mat_mult a c))
-  (* check general cases with lemmas *)
-  lemma mat_mult_chk1: forall a b c : matrix. mat_mult a (mat_mult b c) = mat_mult (mat_mult a b) c
-  lemma mat_mult_chk2: forall a b c : matrix. mat_mult a (mat_add b c) = mat_add (mat_mult a b) (mat_mult a c)
-  lemma mat_mult_chk3: forall a b c : matrix. mat_mult (mat_add a b) c = mat_add (mat_mult a c) (mat_mult b c)
-  
+theory Matrix_Mult_zero
+
+  use import Matrix
+  use import MatrixAdd
+  use import MatrixZero
+  use import MatrixMinus
+  use import MatrixSubtract
+  use import MatrixMultiply
 
   (* multiplying by zero should give zero *)
   lemma mat_mult_zero1: forall a b c d : matrix. (d = mat_mult a (mat_add b c)) /\ (mat_is_zero c) -> (d = mat_mult a b)
-  lemma mat_mult_zero2: forall a b c : matrix. (mat_add a (mat_mult b c) = a) <-> (mat_is_zero (mat_mult b c))
+  lemma mat_mult_zero1b: forall a b c d : matrix. (d = mat_mult a (mat_add b c)) -> (d = mat_add (mat_mult a b) (mat_mult a c))
+  lemma mat_mult_zero1c: forall a b c d : matrix. (d = mat_add (mat_mult a b) (mat_mult a c)) ->  (d = mat_mult a (mat_add b c))
+
+  (* limit of proof *)
+
+  lemma mat_mult_zero2a: forall a b c : matrix. (mat_mult a (mat_add b c) = a) -> (mat_add (mat_mult a b) (mat_mult a c) = a)
   lemma mat_mult_zero3: forall a b c : matrix. (mat_mult a (mat_add b c) = mat_mult a b) -> mat_is_zero (mat_mult a c)
-  lemma mat_postmult_zero2: forall a b : matrix. (mat_is_zero b) -> mat_is_zero (mat_mult a b) 
+  lemma mat_postmult_zero: forall a b : matrix. (mat_is_zero b) -> mat_is_zero (mat_mult a b) 
 
   (* some lemmas for sanity checking *)
   (* a.(b-c) = a.b - a.c *)
   lemma mult_sub2: forall a b c x : matrix. (x = mat_mult a (mat_subtract b c)) <-> (x = mat_mult a (mat_add b (mat_minus c)))
-  lemma mult_sub3: forall a b : matrix. mat_mult a (mat_minus b) = mat_minus (mat_mult a b)
+  (* lemma mult_sub3: forall a b : matrix. mat_mult a (mat_minus b) = mat_minus (mat_mult a b) *)
 
   (* lemma sanchk1: forall a b c x y : matrix. (x = mat_mult a (mat_subtract b c)) /\ (y = mat_subtract (mat_mult a b) (mat_mult a c)) -> (y=x) *)
 
