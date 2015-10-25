@@ -72,19 +72,18 @@ theory MatrixMultiply
   (* matrix multiplication *)
   function mat_mult matrix matrix : matrix
   (* mult is monoid a.(b.c) = (a.b).c *)
-  axiom matmult1: forall a b c d : matrix. (d = mat_mult a (mat_mult b c)) <-> (d = mat_mult (mat_mult a b) c)
+  axiom mat_mult_chk1: forall a b c : matrix. mat_mult a (mat_mult b c) = mat_mult (mat_mult a b) c
   (* right distributive (a+b).c = a.c + b.c *)
-  axiom matmult2a: forall a b c x y : matrix. ((x = mat_mult (mat_add a b) c) /\ (y = mat_add (mat_mult a c) (mat_mult b c))) -> (x=y)
-  axiom matmult2b: forall a b c d : matrix. (d = mat_add (mat_mult a c) (mat_mult b c)) -> (d = mat_mult (mat_add a b) c)
+  axiom mat_mult_chk2: forall a b c : matrix. mat_mult a (mat_add b c) = mat_add (mat_mult a b) (mat_mult a c)
   (* left distributive a.(b+c) = a.b + a.c *)
-  axiom matmult3a: forall a b c d : matrix. (d = mat_mult a (mat_add b c)) -> (d = mat_add (mat_mult a b) (mat_mult a c))
-  axiom matmult3b: forall a b c d : matrix. (d = mat_add (mat_mult a b) (mat_mult a c)) -> (d = mat_mult a (mat_add b c))
+  axiom mat_mult_chk3: forall a b c : matrix. mat_mult (mat_add a b) c = mat_add (mat_mult a c) (mat_mult b c)
 
-  (* check general cases with lemmas *)
-  (* THESE THREE WON'T PROVE *)
-  (* lemma mat_mult_chk1: forall a b c : matrix. mat_mult a (mat_mult b c) = mat_mult (mat_mult a b) c *)
-  (* lemma mat_mult_chk2: forall a b c : matrix. mat_mult a (mat_add b c) = mat_add (mat_mult a b) (mat_mult a c) *)
-  (* lemma mat_mult_chk3: forall a b c : matrix. mat_mult (mat_add a b) c = mat_add (mat_mult a c) (mat_mult b c) *)
+  lemma matmult1: forall a b c d : matrix. (d = mat_mult a (mat_mult b c)) <-> (d = mat_mult (mat_mult a b) c)
+  lemma matmult3a: forall a b c d : matrix. (d = mat_mult a (mat_add b c)) -> (d = mat_add (mat_mult a b) (mat_mult a c))
+  lemma matmult3b: forall a b c d : matrix. (d = mat_add (mat_mult a b) (mat_mult a c)) -> (d = mat_mult a (mat_add b c))
+  lemma matmult2a: forall a b c x y : matrix. ((x = mat_mult (mat_add a b) c) /\ (y = mat_add (mat_mult a c) (mat_mult b c))) -> (x=y)
+  lemma matmult2b: forall a b c d : matrix. (d = mat_add (mat_mult a c) (mat_mult b c)) -> (d = mat_mult (mat_add a b) c)
+
   
 end
 
@@ -151,7 +150,6 @@ theory MatrixSubtract
   lemma mat_sub_assoc2: forall a b c d : matrix. (d = mat_add a (mat_add b (mat_minus c))) -> (d = mat_add (mat_add a b) (mat_minus c))
   lemma mat_sub_assoc: forall a b c d : matrix. (d = mat_add a (mat_subtract b c)) <-> (d = mat_subtract (mat_add a b) c)
 
-  (* (a-b)-c = a-(b+c) *)
   lemma mat_test2: forall a b : matrix. mat_subtract a b = mat_minus (mat_subtract b a)
   lemma mat_test3: forall a b : matrix. mat_is_zero (mat_add (mat_add (mat_minus a) (mat_minus b)) (mat_add a b))
   lemma mat_test5: forall a b : matrix. mat_add (mat_add (mat_minus a) (mat_minus b)) (mat_add a b) = mat_add (mat_add a (mat_minus b)) (mat_add (mat_minus a) b)
@@ -159,16 +157,23 @@ theory MatrixSubtract
   (* NOTE - this one proves but takes more than 5s - set timeout to 20 to progress - with cvc3 anyway *)
   lemma mat_test4: forall a b : matrix. mat_minus (mat_add (mat_minus a) (mat_minus b)) = (mat_add a b)
   lemma mat_test1: forall a b : matrix. mat_add (mat_minus a) (mat_minus b) = mat_minus (mat_add a b)
+
+  (* (a-b)-c = a-(b+c) *)
   lemma mat_sub_test: forall a b c : matrix. (mat_subtract (mat_subtract a b) c) = (mat_subtract a (mat_add b c))
 
-  (* (a-b)+c = a+(c-b) *)
-  lemma mat_sub_chk3: forall a b c x y : matrix. (x = mat_add (mat_subtract a b) c) /\ (y = mat_add a (mat_subtract c b)) -> x=y
   (* check associativity of subtract (a-b)-c = (a-c)-b *)
   lemma mat_assoc: forall a b c d e x y : matrix. (d = mat_subtract a b) /\ (x = mat_subtract d c) /\ (e = mat_subtract a c) /\ (y = mat_subtract e b) -> x=y
 
+  (* (a-b)+c = a+(c-b) *)
+  (* WON'T PROVE *)
+  lemma mat_sub_chk3a: forall a b c x y : matrix. (x = mat_add (mat_subtract a b) c) /\ (y = mat_add a (mat_add c (mat_minus b))) -> x=y
+  lemma mat_sub_chk3b: forall a b c x y : matrix. (x = mat_add a (mat_add c (mat_minus b))) /\ (y = mat_add a (mat_subtract c b)) -> x=y
+  lemma mat_sub_chk3c: forall a b c : matrix. (mat_add (mat_subtract a b) c) = (mat_add a (mat_add c (mat_minus b)))
+  lemma mat_sub_chk3: forall a b c x y : matrix. (x = mat_add (mat_subtract a b) c) /\ (y = mat_add a (mat_subtract c b)) -> x=y
+
 end
 
-theory Matrix_Mult_zero
+theory MatrixMultZero
 
   use import Matrix
   use import MatrixAdd
@@ -182,18 +187,80 @@ theory Matrix_Mult_zero
   lemma mat_mult_zero1b: forall a b c d : matrix. (d = mat_mult a (mat_add b c)) -> (d = mat_add (mat_mult a b) (mat_mult a c))
   lemma mat_mult_zero1c: forall a b c d : matrix. (d = mat_add (mat_mult a b) (mat_mult a c)) ->  (d = mat_mult a (mat_add b c))
 
-  (* limit of proof *)
-
   lemma mat_mult_zero2a: forall a b c : matrix. (mat_mult a (mat_add b c) = a) -> (mat_add (mat_mult a b) (mat_mult a c) = a)
   lemma mat_mult_zero3: forall a b c : matrix. (mat_mult a (mat_add b c) = mat_mult a b) -> mat_is_zero (mat_mult a c)
+
+  (* the main one - a*0 = 0 *)
   lemma mat_postmult_zero: forall a b : matrix. (mat_is_zero b) -> mat_is_zero (mat_mult a b) 
+
+  lemma mat_premult_zero: forall a b : matrix. (mat_is_zero a) -> mat_is_zero (mat_mult a b) 
+
+end
+
+theory MatrixMultSub
+
+  use import Matrix
+  use import MatrixAdd
+  use import MatrixZero
+  use import MatrixMinus
+  use import MatrixSubtract
+  use import MatrixMultiply
+  use import MatrixMultZero
 
   (* some lemmas for sanity checking *)
   (* a.(b-c) = a.b - a.c *)
   lemma mult_sub2: forall a b c x : matrix. (x = mat_mult a (mat_subtract b c)) <-> (x = mat_mult a (mat_add b (mat_minus c)))
-  (* lemma mult_sub3: forall a b : matrix. mat_mult a (mat_minus b) = mat_minus (mat_mult a b) *)
 
+  lemma mult_minus1: forall a b : matrix. mat_is_zero (mat_add (mat_mult (mat_minus a) b) (mat_mult a b))
+  lemma mult_minus2: forall a b : matrix. mat_is_zero (mat_add (mat_mult a (mat_minus b)) (mat_mult a b))
+
+  (* (-a).b = -(a.b) *)
+  lemma mult_minus_pre: forall a b : matrix. mat_mult (mat_minus a) b = mat_minus (mat_mult a b)
+
+  lemma mult_minus_post: forall a b : matrix. mat_mult a (mat_minus b) = mat_minus (mat_mult a b)
+
+  (* lemma mult_sub3: forall a b : matrix. mat_mult a (mat_minus b) = mat_minus (mat_mult a b) *)
   (* lemma sanchk1: forall a b c x y : matrix. (x = mat_mult a (mat_subtract b c)) /\ (y = mat_subtract (mat_mult a b) (mat_mult a c)) -> (y=x) *)
+
+end
+
+theory MatrixQuadForm
+
+  use import Matrix
+  use import MatrixAdd
+  use import MatrixZero
+  use import MatrixMinus
+  use import MatrixSubtract
+  use import MatrixMultiply
+  use import MatrixMultZero
+  use import MatrixMultSub
+
+  (* a.(b.c) = (a.b).c *)
+  lemma quad_chk: forall a b c : matrix. mat_mult (mat_mult a b) c = mat_mult a (mat_mult b c)
+
+  (* a.(b+c).d = a.(b.d + c.d) *)
+  lemma quad_add1: forall a b c d : matrix. mat_mult (mat_mult a (mat_add b c)) d = mat_mult a (mat_add (mat_mult b d) (mat_mult c d))
+
+  (* a*(b+c)*d = a*b*d + a*c*d *)
+  lemma quad_add: forall a b c d : matrix. mat_mult (mat_mult a (mat_add b c)) d = mat_add (mat_mult a (mat_mult b d)) (mat_mult a (mat_mult c d))
+
+  lemma quad_sub1: forall a b c d : matrix. mat_mult (mat_mult a (mat_subtract b c)) d = mat_add (mat_mult a (mat_mult b d)) (mat_mult a (mat_mult (mat_minus c) d))
+  lemma quad_sub2: forall a b c d : matrix. mat_mult (mat_mult a (mat_subtract b c)) d = mat_add (mat_mult a (mat_mult b d)) (mat_minus (mat_mult a (mat_mult c d)))
+
+  (* a*(b-c)*d = a*b*d - a*c*d *)
+  lemma quad_sub: forall a b c d : matrix. mat_mult (mat_mult a (mat_subtract b c)) d = mat_subtract (mat_mult a (mat_mult b d)) (mat_mult a (mat_mult c d))
+
+end
+
+theory MatrixConcat
+
+  use import Matrix
+  use import MatrixAdd
+  use import MatrixZero
+  use import MatrixMinus
+  use import MatrixSubtract
+  use import MatrixMultiply
+  use import MatrixMultZero
 
   (* --------- CONCAT ---------- *)
 
