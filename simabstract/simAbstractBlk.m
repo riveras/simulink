@@ -5,6 +5,7 @@ classdef simAbstractBlk < handle
         outputs
         inputs
         block_type
+        mask_type
     end
     
     methods
@@ -16,6 +17,11 @@ classdef simAbstractBlk < handle
                 obj.block_type = get_param(matlab_name,'BlockType');
             catch
                 warning('Unable to determine BlockType for %s',matlab_name)
+            end
+            try
+                obj.mask_type = get_param(matlab_name,'MaskType');
+            catch
+                warning('Unable to determine MaskType for %s',matlab_name)
             end
         end
         
@@ -36,7 +42,7 @@ classdef simAbstractBlk < handle
         end
         
         function disp(obj)
-            fprintf('\n*** BLOCK: %s (%s) ***\n',obj.matlab_name,obj.block_type);
+            fprintf('\n*** BLOCK: %s (%s / %s) ***\n',obj.matlab_name,obj.block_type,obj.mask_type);
             disp('INPUTS');
             for ii=1:numel(obj.inputs),
                 obj.inputs{ii}.disp();
