@@ -53,5 +53,13 @@ classdef simAbstractBlk < handle
             end
         end
         
+        function n=num_inputs(obj)
+            n = numel(obj.inputs);
+        end
+        
+        function n=num_outputs(obj)
+            n = numel(obj.outputs);
+        end
+        
     end
 end

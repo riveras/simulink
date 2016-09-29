@@ -34,6 +34,14 @@ classdef simAbstractSyntax < handle
             end
         end
         
+        function n = num_blocks(obj)
+            n = numel(obj.blocks);
+        end
+        
+        function n = num_signals(obj)
+            n = numel(obj.signals);
+        end
+        
         function findOutputSignals(obj,blk_obj)
             port_conn = [];
             try
