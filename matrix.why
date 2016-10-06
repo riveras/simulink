@@ -142,7 +142,6 @@ theory MatrixSubtract
   lemma mat_assoc: forall a b c d e x y : matrix. (d = mat_subtract a b) /\ (x = mat_subtract d c) /\ (e = mat_subtract a c) /\ (y = mat_subtract e b) -> x=y
 
   (* (a-b)+c = a+(c-b) *)
-  (* WON'T PROVE *)
   lemma mat_sub_chk3a: forall a b c x y : matrix. (x = mat_add (mat_subtract a b) c) /\ (y = mat_add a (mat_add c (mat_minus b))) -> x=y
   lemma mat_sub_chk3b: forall a b c x y : matrix. (x = mat_add a (mat_add c (mat_minus b))) /\ (y = mat_add a (mat_subtract c b)) -> x=y
   lemma mat_sub_chk3c: forall a b c : matrix. (mat_add (mat_subtract a b) c) = (mat_add a (mat_add c (mat_minus b)))
