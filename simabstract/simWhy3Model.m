@@ -27,6 +27,23 @@ classdef simWhy3Model < simAbstractSyntax
             end
         end
         
+        function disp(obj)
+            % dump why3 to screen
+            obj.toWhy3(1);
+        end
+        
+        function writeToFile(obj,fname)
+            if ~exist('fname','var'),
+                fname = sprintf('%s.why',obj.mdl_name);
+            end
+            fid = fopen(fname,'w');
+            if fid==-1,
+                error('Problem opening file')
+            end
+            obj.toWhy3(fid);
+            fclose(fid);
+        end
+        
         function clone_block(obj,fid,ii)
             fprintf(fid, '\nnamespace ns_%s\n', simWhy3Model.fix_name(obj.blocks{ii}.matlab_name));
             fprintf(fid, '  clone %s with', obj.blocks{ii}.mask_type);
@@ -34,13 +51,13 @@ classdef simWhy3Model < simAbstractSyntax
                 if jj>1,
                     fprintf(fid,',');
                 end
-                fprintf(fid,' function in%d = %s',jj,simWhy3Model.fix_name(obj.blocks{ii}.inputs{jj}.matlab_name))
+                fprintf(fid,' function in%d = %s',jj,simWhy3Model.fix_name(obj.blocks{ii}.inputs{jj}.matlab_name));
             end
             for jj=1:obj.blocks{ii}.num_outputs,
                 if jj>1,
                     fprintf(fid,',');
                 end
-                fprintf(fid,' function out%d = %s',jj,simWhy3Model.fix_name(obj.blocks{ii}.outputs{jj}.matlab_name))
+                fprintf(fid,' function out%d = %s',jj,simWhy3Model.fix_name(obj.blocks{ii}.outputs{jj}.matlab_name));
             end
             fprintf(fid, '\nend\n');
         end

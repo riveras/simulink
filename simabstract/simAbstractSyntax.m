@@ -1,12 +1,14 @@
 classdef simAbstractSyntax < handle
     
     properties
+        mdl_name
         blocks
         signals
     end
     
     methods
         function obj = simAbstractSyntax(mdl_name)
+            obj.mdl_name = mdl_name;
             blk_names = find_system(mdl_name);
             for ii=1:numel(blk_names),
                 obj.blocks{ii}=simAbstractBlk(blk_names{ii});
