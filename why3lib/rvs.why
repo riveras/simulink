@@ -1,0 +1,19 @@
+theory T_rvsAdd
+ use import matrix.Matrix
+ use import matrix.MatrixAdd
+
+ function in1 int: matrix
+ function in2 int: matrix
+ function out1 int: matrix
+
+ axiom A1: forall k:int. out1 k = mat_add (in1 k) (in2 k)
+end
+
+theory T_rvsEquiv
+ use import matrix.Matrix
+
+ function in1 int: matrix
+ function in2 int: matrix
+
+ goal G1: forall k:int. in1 k = in2 k
+end
