@@ -18,6 +18,7 @@ theory MatrixAdd
 
   (* matrix addition *)
   function mat_add matrix matrix : matrix
+
   (* add is commutative: if c = a+b then c = b+a *)
   axiom mat_add_comm: forall a b c : matrix. (c = mat_add a b) -> (c = mat_add b a)
 
@@ -46,6 +47,7 @@ theory MatrixZero
 
   (* concept of a zero matrix *)
   predicate mat_is_zero matrix
+
   (* defined that if a+b=c and a=c then b=0 *)
   axiom mat_zero_def1: forall a b : matrix. ((mat_add a b) = a) <-> (mat_is_zero b)
 
@@ -72,6 +74,7 @@ theory MatrixMinus
 
   (* additive inverse - minus! *)
   function mat_minus matrix : matrix
+
   (* define equivalence: a+(-a) = 0 *)
   axiom mat_minus_def: forall a : matrix. mat_is_zero (mat_add a (mat_minus a))
 
