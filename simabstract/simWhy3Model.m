@@ -1,7 +1,7 @@
 classdef simWhy3Model < simAbstractSyntax
     
     properties(Constant=true)
-        known_masks = {'rvsAdd','rvsSubtract'};
+        known_masks = {'rvsAdd','rvsSubtract','rvsEquiv'};
     end
     
     methods
@@ -55,6 +55,8 @@ classdef simWhy3Model < simAbstractSyntax
             end
             for jj=1:obj.blocks{ii}.num_outputs,
                 if jj>1,
+                    fprintf(fid,',');
+                elseif obj.blocks{ii}.num_inputs>0,
                     fprintf(fid,',');
                 end
                 fprintf(fid,' function out%d = %s',jj,simWhy3Model.fix_name(obj.blocks{ii}.outputs{jj}.matlab_name));

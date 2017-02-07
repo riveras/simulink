@@ -1,2 +1,4 @@
 *~
 *.asv
+*.autosave
+*.r201*
